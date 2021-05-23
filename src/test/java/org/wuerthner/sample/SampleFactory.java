@@ -1,0 +1,37 @@
+package org.wuerthner.sample;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.wuerthner.sport.api.ModelElement;
+import org.wuerthner.sport.api.ModelElementFactory;
+
+public class SampleFactory implements ModelElementFactory {
+	public final static List<ModelElement> elementList = Arrays.asList(new ModelElement[] {
+			new School(), new Course(), new Participant()
+	});
+	
+	@Override
+	public <T extends ModelElement> T createElement(String typeName) {
+		T element;
+		switch (typeName) {
+			case School.TYPE: element = (T) new School(); break;
+			case Course.TYPE: element = (T) new Course(); break;
+			case Participant.TYPE: element = (T) new Participant(); break;
+			default:
+				throw new RuntimeException("Invalid element type: " + typeName);
+		}
+		return element;
+	}
+	
+	// @Override
+	public List<ModelElement> createElementList() {
+		return elementList;
+	}
+	
+	// @Override
+	public String getDocumentType() {
+		return School.TYPE;
+	}
+	
+}
