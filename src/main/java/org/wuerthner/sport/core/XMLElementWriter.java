@@ -1,11 +1,10 @@
 package org.wuerthner.sport.core;
 
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+import org.wuerthner.sport.api.ModelElement;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,15 +13,15 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-import org.wuerthner.sport.api.ModelElement;
-
-public class XMLWriter {
-	public final static String timestampFormat = "yyyy-MM-dd HH:mm:ss";
+public class XMLElementWriter {
+	private final static String timestampFormat = "yyyy-MM-dd HH:mm:ss";
 	
 	public void run(ModelElement element, OutputStream outputStream) {
 		try {
@@ -35,7 +34,7 @@ public class XMLWriter {
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			
 			Document document = docBuilder.newDocument();
-			Element rootElement = document.createElement("Model");
+			Element rootElement = document.createElement("root");
 			addAttribute("version", "1.0", rootElement, document);
 			addAttribute("timestamp", createTimeStamp(), rootElement, document);
 			document.appendChild(rootElement);
@@ -60,7 +59,7 @@ public class XMLWriter {
 	
 	private void writeElement(ModelElement element, Element parent, Document document) {
 		String parentType = element.getType();
-		Element elementDef = document.createElement(parentType + "Def");
+		Element elementDef = document.createElement("ElementDef");
 		parent.appendChild(elementDef);
 		
 		addAttribute("type", parentType, elementDef, document);
@@ -83,7 +82,7 @@ public class XMLWriter {
 			writeElement(child, parent, document);
 			
 			String childType = child.getType();
-			Element elementRef = document.createElement(childType + "Ref");
+			Element elementRef = document.createElement("ElementRef");
 			elementDef.appendChild(elementRef);
 			addAttribute("id", String.valueOf(child.getTechnicalId()), elementRef, document);
 		}

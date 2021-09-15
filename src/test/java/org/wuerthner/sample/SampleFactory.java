@@ -8,7 +8,7 @@ import org.wuerthner.sport.api.ModelElementFactory;
 
 public class SampleFactory implements ModelElementFactory {
 	public final static List<ModelElement> elementList = Arrays.asList(new ModelElement[] {
-			new School(), new Course(), new Participant()
+			new School(), new Course(), new Participant(), new ListObject()
 	});
 	
 	@Override
@@ -18,6 +18,7 @@ public class SampleFactory implements ModelElementFactory {
 			case School.TYPE: element = (T) new School(); break;
 			case Course.TYPE: element = (T) new Course(); break;
 			case Participant.TYPE: element = (T) new Participant(); break;
+			case ListObject.TYPE: element = (T) new ListObject(); break;
 			default:
 				throw new RuntimeException("Invalid element type: " + typeName);
 		}

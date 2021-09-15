@@ -1,13 +1,19 @@
 package org.wuerthner.sport;
 
 import org.wuerthner.sample.*;
+import org.wuerthner.sport.api.Attribute;
 import org.wuerthner.sport.api.History;
 import org.wuerthner.sport.api.ModelElement;
 import org.wuerthner.sport.api.ModelElementFactory;
+import org.wuerthner.sport.attribute.AttributeBuilder;
+import org.wuerthner.sport.attribute.IdAttribute;
+import org.wuerthner.sport.attribute.ListAttribute;
 import org.wuerthner.sport.core.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Test {
@@ -111,4 +117,20 @@ public class Test {
             System.out.println("- " + d.toString());
         }
     }
+
+    @org.junit.Test
+    public void testList() {
+        ListObject lo = new ListObject();
+        System.out.println("lo: " + Model.makeString(lo));
+        List<Integer> val = lo.getAttributeValue(ListObject.ia);
+        System.out.println("val: " + val);
+        // lo.performTransientSetAttributeValueOperation(ListObject.ia, Arrays.asList(4, 5, 6));
+        // System.out.println(Model.makeString(lo));
+        lo.forceAddAttribute("ia","[1, 2, 3]", List.class);
+        System.out.println("lo: " + Model.makeString(lo));
+        ModelElement copy = factory.copyTree(lo);
+        System.out.println("copy: " + Model.makeString(copy));
+    }
+
+
 }

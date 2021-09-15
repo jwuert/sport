@@ -11,7 +11,9 @@ public interface ModelElementFactory {
 			String key = entry.getKey();
 			Class<T> clasz = (Class<T>) original.getAttributeTypeMap().get(key);
 			T value = (T) entry.getValue();
-			copy.forceAddAttribute(key, value, clasz);
+			System.out.println("*** " + key + ", " + value + ", " + value.getClass() + ", " + clasz);
+			copy.forceAddAttribute(key, entry.getValue(), clasz);
+			// copy.forceAddAttribute(key, value, clasz);
 		}
 		for (ModelElement child : original.getChildren()) {
 			ModelElement childCopy = copyTree(child);

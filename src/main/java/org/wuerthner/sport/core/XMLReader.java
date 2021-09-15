@@ -1,11 +1,8 @@
 package org.wuerthner.sport.core;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -19,16 +16,17 @@ import org.wuerthner.sport.api.ModelElement;
 import org.wuerthner.sport.api.ModelElementFactory;
 
 public class XMLReader {
-	public static final String ROOT = "Model";
+	private final String rootElementName;
 	private final String rootType;
-	
 	private final ModelElementFactory factory;
-	
+	private final double defaultVersion;
 	FAModel faModel = null;
-	
-	public XMLReader(ModelElementFactory factory, String rootType) {
+
+	public XMLReader(ModelElementFactory factory, String rootType, String rootElementName) {
 		this.factory = factory;
 		this.rootType = rootType;
+		this.rootElementName = rootElementName;
+		this.defaultVersion = 1.0;
 	}
 	
 	public ModelElement run(InputStream inputStream) {
@@ -67,7 +65,7 @@ public class XMLReader {
 						} catch (ClassNotFoundException e) {
 							throw new RuntimeException("Invalid element: '" + elementName + "'");
 						}
-					} else if (elementName.equals(ROOT)) {
+					} else if (elementName.equals(rootElementName)) {
 						validRoot = true;
 						faModel = new FAModel(startElement);
 					} else {
@@ -89,7 +87,7 @@ public class XMLReader {
 				}
 			}
 			if (!validRoot) {
-				throw new RuntimeException("Invalid study model - root element '" + ROOT + "' missing!");
+				throw new RuntimeException("Invalid study model - root element '" + rootElementName + "' missing!");
 			}
 			
 			Map<Integer, ModelElement> elementMap = new HashMap<>();
@@ -98,6 +96,7 @@ public class XMLReader {
 				ElementDef elementDef = entry.getValue();
 				String type = elementDef.type;
 				int order = elementDef.order;
+				type = shorten(type);
 				ModelElement element = factory.createElement(type);
 				for (Attr attr : elementDef.attrList) {
 					((AbstractModelElement) element).setAttributeValue(attr.key.trim(), attr.value.trim());
@@ -126,7 +125,16 @@ public class XMLReader {
 		
 		return root;
 	}
-	
+
+	private String shorten(String type) {
+		int index = type.lastIndexOf('.');
+		if (index<0) {
+			return type;
+		} else {
+			return type.substring(index+1);
+		}
+	}
+
 	public String getTimestamp() {
 		if (faModel == null) {
 			throw new RuntimeException("FA Model not available!");
@@ -156,11 +164,11 @@ public class XMLReader {
 			int orderAttribute = -1;
 			while (attributes.hasNext()) {
 				Attribute attribute = attributes.next();
-				if (attribute.getName().getLocalPart().equals("id")) {
+				if (attribute.getName().getLocalPart().equalsIgnoreCase("id")) {
 					idAttribute = Integer.valueOf(attribute.getValue());
-				} else if (attribute.getName().getLocalPart().equals("type")) {
+				} else if (attribute.getName().getLocalPart().equalsIgnoreCase("type")) {
 					typeAttribute = attribute.getValue();
-				} else if (attribute.getName().getLocalPart().equals("order")) {
+				} else if (attribute.getName().getLocalPart().equalsIgnoreCase("order")) {
 					orderAttribute = Integer.valueOf(attribute.getValue());
 				} else {
 					throw new RuntimeException("Unknown attribute: '" + attribute.getName() + "'");
@@ -194,7 +202,7 @@ public class XMLReader {
 			int idAttribute = -1;
 			while (attributes.hasNext()) {
 				Attribute attribute = attributes.next();
-				if (attribute.getName().getLocalPart().equals("id")) {
+				if (attribute.getName().getLocalPart().equalsIgnoreCase("id")) {
 					idAttribute = Integer.valueOf(attribute.getValue());
 				} else {
 					throw new RuntimeException("Unknown attribute: " + attribute.getName());
@@ -218,18 +226,24 @@ public class XMLReader {
 			String timestampAttribute = "";
 			while (attributes.hasNext()) {
 				Attribute attribute = attributes.next();
-				if (attribute.getName().getLocalPart().equals("version")) {
+				if (attribute.getName().getLocalPart().equalsIgnoreCase("version")) {
 					versionAttribute = Double.valueOf(attribute.getValue());
-				} else if (attribute.getName().getLocalPart().equals("timestamp")) {
+				} else if (attribute.getName().getLocalPart().equalsIgnoreCase("timestamp")) {
 					timestampAttribute = attribute.getValue();
 				} else {
 					throw new RuntimeException("Unknown attribute: " + attribute.getName());
 				}
 			}
 			if (versionAttribute < 0) {
-				throw new RuntimeException("Missing version attribute for: " + startElement.getName().getLocalPart());
-			} else if (timestampAttribute == null || timestampAttribute.equals("")) {
-				throw new RuntimeException("Missing timestamp attribute for: " + startElement.getName().getLocalPart());
+				if (defaultVersion>=0) {
+					versionAttribute = defaultVersion;
+				} else {
+					throw new RuntimeException("Missing version attribute for: " + startElement.getName().getLocalPart());
+				}
+			}
+			if (timestampAttribute == null || timestampAttribute.equals("")) {
+				timestampAttribute = new SimpleDateFormat(XMLWriter.timestampFormat).format(new Date());
+				// throw new RuntimeException("Missing timestamp attribute for: " + startElement.getName().getLocalPart());
 			}
 			this.version = versionAttribute;
 			this.timestamp = timestampAttribute;
@@ -246,12 +260,15 @@ public class XMLReader {
 			Iterator<Attribute> attributes = startElement.getAttributes();
 			String keyAttribute = null;
 			String typeAttribute = null;
+			String valueAttribute = "";
 			while (attributes.hasNext()) {
 				Attribute attribute = attributes.next();
-				if (attribute.getName().getLocalPart().equals("key")) {
+				if (attribute.getName().getLocalPart().equalsIgnoreCase("key")) {
 					keyAttribute = attribute.getValue();
-				} else if (attribute.getName().getLocalPart().equals("type")) {
+				} else if (attribute.getName().getLocalPart().equalsIgnoreCase("type")) {
 					typeAttribute = attribute.getValue();
+				} else if (attribute.getName().getLocalPart().equalsIgnoreCase("value")) {
+					valueAttribute = attribute.getValue();
 				} else {
 					throw new RuntimeException("Unknown attribute: " + attribute.getName());
 				}
@@ -259,12 +276,12 @@ public class XMLReader {
 			if (keyAttribute == null) {
 				throw new RuntimeException("Missing key attribute for: " + startElement.getName().getLocalPart());
 			}
-			if (typeAttribute == null) {
-				throw new RuntimeException("Missing type attribute for: " + startElement.getName().getLocalPart());
-			}
-			this.type = Class.forName(typeAttribute);
+//			if (typeAttribute == null) {
+//				throw new RuntimeException("Missing type attribute for: " + startElement.getName().getLocalPart());
+//			}
+// 			this.type = Class.forName(typeAttribute);
 			this.key = keyAttribute;
-			this.value = "";
+			this.value = valueAttribute;
 		}
 		
 		public void addValue(String data) {

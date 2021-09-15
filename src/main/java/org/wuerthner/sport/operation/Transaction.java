@@ -29,6 +29,10 @@ public class Transaction implements Operation, Iterable<Operation> {
         this.reverseUndo = reverseUndo;
     }
 
+    public Transaction(boolean reverseUndo, String name, List<? extends Operation> operationList) {
+        this(reverseUndo, name, operationList.toArray(new Operation[] {}));
+    }
+
     public Transaction(String name, List<? extends Operation> operationList) {
         this(name, operationList.toArray(new Operation[] {}));
     }

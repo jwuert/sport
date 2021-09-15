@@ -15,7 +15,7 @@ public class Model {
         String name = element.getAttributeValue("id");
         String space = make(' ', depth * 2);
         // System.out.println(element.getType() + (name == null ? "" : " \"" + name + "\""));
-        buf.append(space + element.getType() + " [" + element.getId() + ":" + element.getTechnicalId() + "]"+ SEP);
+        buf.append(space + element.getType() + " [" + element.getId() + ":" + element.getTechnicalId() + (element.isDeleted()?" D":"") + (element.isInClipboard()?" C":"") + "] " + element.hashCode() + SEP);
         for (Attribute<?> attribute : element.getAttributes()) {
             String key = attribute.getName();
             String value = element.getAttributeValue(attribute.getName());

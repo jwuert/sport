@@ -25,9 +25,11 @@ public interface ModelElement {
 	void setType(String type);
 
 	ModelElement getParent();
-	
+
 	<T> T getAttributeValue(Attribute<T> attribute);
-	
+
+	<T> T getAttributeValue(Attribute<T> attribute, T defaultValue);
+
 	String getAttributeValue(String name);
 	
 	Attribute<?>[] getAttributes();
@@ -67,11 +69,19 @@ public interface ModelElement {
 
 	public <T> void performSetAttributeValueOperation(Attribute<T> attribute, T value, History history);
 
+	public void performCutToClipboardOperation(Clipboard clipboard, List<? extends ModelElement> elementList, History history);
+
+	public void performCopyToClipboardOperation(Clipboard clipboard, List<? extends ModelElement> elementList, ModelElementFactory factory, History history);
+
+	public void performPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory, History history);
+
+	public <Element extends ModelElement> void performModifyPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory, History history, Modifier<Element> modifier);
+
 	public void performTransaction(Transaction transaction, History history);
 
 	public ModelElement forceAddChild(ModelElement child);
 
-	public <T> void forceAddAttribute(String key, T value, Class<T> clasz);
+	public <T> void forceAddAttribute(String key, String value, Class<T> clasz);
 
 	ModelElement getRoot();
 

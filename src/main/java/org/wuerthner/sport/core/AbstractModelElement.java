@@ -4,10 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.wuerthner.sport.api.*;
-import org.wuerthner.sport.operation.AddChildOperation;
-import org.wuerthner.sport.operation.RemoveChildOperation;
-import org.wuerthner.sport.operation.SetAttributeValueOperation;
-import org.wuerthner.sport.operation.Transaction;
+import org.wuerthner.sport.operation.*;
 
 public class AbstractModelElement implements ModelElement {
 	
@@ -82,6 +79,12 @@ public class AbstractModelElement implements ModelElement {
 		String stringValue = attributeMap.get(key);
 		value = attribute.getValue(stringValue);
 		return value;
+	}
+
+	@Override
+	public <T> T getAttributeValue(Attribute<T> attribute, T defaultValue) {
+		T value = getAttributeValue(attribute);
+		return (value==null ? defaultValue : value);
 	}
 	
 	@Override
@@ -202,6 +205,42 @@ public class AbstractModelElement implements ModelElement {
 	}
 
 	@Override
+	public void performCutToClipboardOperation(Clipboard clipboard, List<? extends ModelElement> elementList, History history) {
+		Operation operation = new CutToClipboardOperation(clipboard, elementList);
+		synchronized (history) {
+			history.add(operation);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	@Override
+	public void performCopyToClipboardOperation(Clipboard clipboard, List<? extends ModelElement> elementList, ModelElementFactory factory, History history) {
+		Operation operation = new CopyToClipboardOperation(clipboard, elementList, factory);
+		synchronized (history) {
+			history.add(operation);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	@Override
+	public void performPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory, History history) {
+		Operation operation = new PasteOperation(clipboard, this, factory);
+		synchronized (history) {
+			history.add(operation);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	@Override
+	public <Element extends ModelElement> void performModifyPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory, History history, Modifier<Element> modifier) {
+		Operation operation = new ModifyPasteOperation(clipboard, this, factory, modifier);
+		synchronized (history) {
+			history.add(operation);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	@Override
 	public void performTransaction(Transaction transaction, History history) {
 		synchronized (history) {
 			history.add(transaction);
@@ -252,6 +291,7 @@ public class AbstractModelElement implements ModelElement {
 		if (acceptsChild(child)) {
 			children.add(child);
 			((AbstractModelElement) child).setParent(this);
+			((AbstractModelElement) child).setDeletedDeep(this.isDeleted());
 			return this;
 		} else {
 			throw new RuntimeException("Invalid attempt to add child of type: " + child.getType() + " to parent of type: " + this.getType());
@@ -261,19 +301,31 @@ public class AbstractModelElement implements ModelElement {
 	public ModelElement forceAddChild(ModelElement child) {
 		children.add(child);
 		((AbstractModelElement) child).setParent(this);
+		((AbstractModelElement) child).setDeletedDeep(this.isDeleted());
 		return this;
 	}
 
-	public <T> void forceAddAttribute(String key, T value, Class<T> clasz) {
-		Optional<Attribute<?>> optionalAttribute = lookupAttribute(key);
-		Attribute<T> attribute = (Attribute<T>) optionalAttribute.get();
-		String stringPresentation = attribute.getStringPresentation(value);
-		attributeMap.put(key, stringPresentation);
+	// public <T> void forceAddAttribute(String key, T value, Class<T> clasz) {
+	public <T> void forceAddAttribute(String key, String value, Class<T> clasz) {
+		//Optional<Attribute<?>> optionalAttribute = lookupAttribute(key);
+		//Attribute<T> attribute = (Attribute<T>) optionalAttribute.get();
+		//System.out.println("### set " + key + " = " + value + " (" + clasz + ") " + attribute);
+		//String stringPresentation = attribute.getStringPresentation(value);
+		//attributeMap.put(key, stringPresentation);
+		attributeMap.put(key, value);
 	}
 
 	public void removeChild(ModelElement child) {
 		boolean ok = children.remove(child);
 		((AbstractModelElement) child).removeParent();
+		((AbstractModelElement) child).setDeletedDeep(true);
+	}
+
+	public void setDeletedDeep(boolean deleted) {
+		setDeleted(true);
+		for (ModelElement child: this.getChildren()) {
+			child.setDeleted(deleted);
+		}
 	}
 
 	public <T> void setAttributeValue(Attribute<T> attribute, T value) {
