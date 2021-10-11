@@ -70,11 +70,13 @@ public class XMLElementWriter {
 			String key = entry.getKey();
 			String value = entry.getValue();
 			Class<?> type = element.getAttributeTypeMap().get(key);
-			Element attributeElement = document.createElement("Attribute");
-			elementDef.appendChild(attributeElement);
-			addAttribute("key", key, attributeElement, document);
-			addAttribute("type", type.getName(), attributeElement, document);
-			addContent("value", value, attributeElement, document);
+			if (type != null) {
+				Element attributeElement = document.createElement("Attribute");
+				elementDef.appendChild(attributeElement);
+				addAttribute("key", key, attributeElement, document);
+				addAttribute("type", type.getName(), attributeElement, document);
+				addContent("value", value, attributeElement, document);
+			}
 		}
 		
 		// children:

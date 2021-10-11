@@ -38,7 +38,7 @@ public class SetAttributeValueOperation<T> implements Operation, AttributeOperat
 	
 	@Override
 	public String info() {
-		return "SetAttribute " + attribute.getName() + ": " + oldValue + " -> " + newValue;
+		return "SetAttribute " + element.getParent().getId() + "." + attribute.getName() + ": " + oldValue + " -> " + newValue;
 	}
 	
 	@Override

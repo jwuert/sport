@@ -26,17 +26,17 @@ public class Delta {
 
     public void addValueDifference(ModelElement element1, ModelElement element2, String attributeId, String value1, String value2) {
         verifyIdAndType(element1, element2);
-        Difference diff = new Difference(Type.Value, element1.getFullId(), element1.getType(), value1, value2);
+        Difference diff = new Difference(Type.Value, element1.getFullId(), element1.getType(), value1, value2, attributeId);
         add(diff);
     }
 
     public void addOnlyInFirstDifference(ModelElement element) {
-        Difference diff = new Difference(Type.Element, element.getFullId(), element.getType(), "exists only in first", "-"); // "only in first"
+        Difference diff = new Difference(Type.Element, element.getFullId(), element.getType(), "exists only in first", "-", ""); // "only in first"
         add(diff);
     }
 
     public void addOnlyInSecondDifference(ModelElement element) {
-        Difference diff = new Difference(Type.Element, element.getFullId(), element.getType(), "-", "exists only in second"); // "only in second"
+        Difference diff = new Difference(Type.Element, element.getFullId(), element.getType(), "-", "exists only in second", ""); // "only in second"
         add(diff);
     }
 
@@ -117,14 +117,16 @@ public class Delta {
         buf.append(makeTab("Type", 15));
         buf.append(makeTab("Value 1", 30));
         buf.append(makeTab("Value 2", 30));
+        buf.append(makeTab("Attribute", 30));
         buf.append(System.lineSeparator());
         for (Difference diff : differenceList) {
             if (!type.isPresent() || diff.type==type.get()) {
                 buf.append(makeTab(diff.type.label, 20));
-                buf.append(makeTab(diff.fqid, 30));
+                buf.append(makeTab(diff.fqid, 40));
                 buf.append(makeTab(diff.elementType, 15));
                 buf.append(makeTab(diff.value1, 30));
                 buf.append(makeTab(diff.value2, 30));
+                buf.append(makeTab(diff.attributeId, 30));
                 buf.append(System.lineSeparator());
             }
         }
@@ -137,13 +139,13 @@ public class Delta {
 
     private void verifyIdAndType(ModelElement tree1, ModelElement tree2) {
         if (tree1.getType()==null) {
-            add(new Difference(Type.Error, tree1.getFullId(), tree1.getType(), "first missing type", "-"));
+            add(new Difference(Type.Error, tree1.getFullId(), tree1.getType(), "first missing type", "-", ""));
         }
         if (tree2.getType()==null) {
-            add(new Difference(Type.Error, tree2.getFullId(), tree2.getType(), "-", "second missing type"));
+            add(new Difference(Type.Error, tree2.getFullId(), tree2.getType(), "-", "second missing type", ""));
         }
         if (tree1.getType()!=null && tree2.getType()!=null) {
-            if (tree1.getId() != tree2.getId()) {
+            if (!tree1.getId().equals(tree2.getId())) {
                 throw new RuntimeException("Comparison: two elements have different IDs: " + tree1.getId()+"/"+tree2.getId());
             }
             if (!tree1.getType().equals(tree2.getType())) {
@@ -169,6 +171,7 @@ public class Delta {
         public final Type type;
         public final String id;
         public final String fqid;
+        public final String attributeId;
         public final String elementType;
         public final String value1;
         public final String value2;
@@ -177,6 +180,7 @@ public class Delta {
             // Attributes differ
             this.type = type;
             this.fqid = fqid==null ? "" : fqid;
+            this.attributeId = ".";
             this.elementType = elementType==null ? "" : elementType;
             this.id = cutId(this.fqid);
             String msg = "";
@@ -210,9 +214,10 @@ public class Delta {
             }
         }
 
-        public Difference(Type type, String fqid, String elementType, String value1, String value2) {
+        public Difference(Type type, String fqid, String elementType, String value1, String value2, String attributeId) {
             this.type = type;
             this.fqid = fqid==null ? "" : fqid;
+            this.attributeId = attributeId;
             this.elementType = elementType==null ? "" : elementType;
             List<String> list = Arrays.asList(value1==null?"-":value1, value2==null?"-":value2);
             this.value1 = list.get(0);
