@@ -25,6 +25,7 @@ public class CutToClipboardOperation implements Operation {
 		this.newClipboardElements = new ArrayList<>();
 		List<Operation> opList = new ArrayList<>();
 		for (ModelElement element : selection) {
+			element.setReference(element.getParent());
 			newClipboardElements.add(element);
 			RemoveChildOperation op = new RemoveChildOperation(element);
 			opList.add(op);

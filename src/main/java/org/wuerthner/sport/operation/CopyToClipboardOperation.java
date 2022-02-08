@@ -23,6 +23,7 @@ public class CopyToClipboardOperation implements Operation {
 		this.newClipboardElements = new ArrayList<>();
 		for (ModelElement element : selection) {
 			final ModelElement copy = factory.copyTree(element);
+			copy.setReference(element.getParent());
 			((AbstractModelElement)copy).setDeletedDeep(true);
 			newClipboardElements.add(copy);
 		}

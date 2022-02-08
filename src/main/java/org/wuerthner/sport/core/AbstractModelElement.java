@@ -18,6 +18,7 @@ public class AbstractModelElement implements ModelElement {
 	private boolean deleted = false;
 	private boolean inClipboard = false;
 	private ModelElement parent;
+	private ModelElement reference;
 
 	public AbstractModelElement(String type, List<String> childTypes, List<Attribute<?>> attributes) {
 		this.type = type;
@@ -241,6 +242,15 @@ public class AbstractModelElement implements ModelElement {
 	}
 
 	@Override
+	public <Element extends ModelElement> void performModifyPasteClipboardToReferenceOperation(Clipboard clipboard, ModelElementFactory factory, History history, Modifier<Element> modifier) {
+		Operation operation = new ModifyPasteToReferenceOperation(clipboard, factory, modifier);
+		synchronized (history) {
+			history.add(operation);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	@Override
 	public void performTransaction(Transaction transaction, History history) {
 		synchronized (history) {
 			history.add(transaction);
@@ -362,6 +372,14 @@ public class AbstractModelElement implements ModelElement {
 			verifyAttribute(entry.getKey(), entry.getValue());
 		}
 		this.attributeMap = attributeMap;
+	}
+
+	public void setReference(ModelElement reference) {
+		this.reference = reference;
+	}
+
+	public ModelElement getReference() {
+		return this.reference;
 	}
 	
 	private void performTransientOperation(Operation operation) {

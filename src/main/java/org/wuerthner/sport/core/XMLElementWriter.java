@@ -49,7 +49,6 @@ public class XMLElementWriter {
 			DOMSource source = new DOMSource(document);
 			
 			StreamResult result = new StreamResult(outputStream);
-			
 			transformer.transform(source, result);
 			
 		} catch (Exception e) {

@@ -11,7 +11,6 @@ public interface ModelElementFactory {
 			String key = entry.getKey();
 			Class<T> clasz = (Class<T>) original.getAttributeTypeMap().get(key);
 			T value = (T) entry.getValue();
-			System.out.println("*** " + key + ", " + value + ", " + value.getClass() + ", " + clasz);
 			copy.forceAddAttribute(key, entry.getValue(), clasz);
 			// copy.forceAddAttribute(key, value, clasz);
 		}

@@ -26,6 +26,10 @@ public interface ModelElement {
 
 	ModelElement getParent();
 
+	ModelElement getReference();
+
+	public void setReference(ModelElement reference);
+
 	<T> T getAttributeValue(Attribute<T> attribute);
 
 	<T> T getAttributeValue(Attribute<T> attribute, T defaultValue);
@@ -76,6 +80,8 @@ public interface ModelElement {
 	public void performPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory, History history);
 
 	public <Element extends ModelElement> void performModifyPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory, History history, Modifier<Element> modifier);
+
+	public <Element extends ModelElement> void performModifyPasteClipboardToReferenceOperation(Clipboard clipboard, ModelElementFactory factory, History history, Modifier<Element> modifier);
 
 	public void performTransaction(Transaction transaction, History history);
 

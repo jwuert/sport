@@ -61,3 +61,4 @@ public class SetAttributeValueOperation<T> implements Operation, AttributeOperat
 		return newValue;
 	}
 }
+
