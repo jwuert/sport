@@ -42,6 +42,8 @@ public interface ModelElement {
 
 	Map<String, Class<?>> getAttributeTypeMap();
 
+	public Attribute<?> getAttribute(String name);
+
 	boolean isDeleted();
 
 	void setDeleted(boolean deleted);
@@ -60,12 +62,29 @@ public interface ModelElement {
 
 	<T> List<T> getChildrenByClass(Class<T> clasz);
 
+	default List<Attribute<?>> getCategoryAttributes() {
+		return new ArrayList<>();
+	}
+
 	// transient operations
+
 	public void performTransientAddChildOperation(ModelElement element);
 	
 	public void performTransientRemoveChildOperation(ModelElement element);
 	
 	public <T> void performTransientSetAttributeValueOperation(Attribute<T> attribute, T value);
+
+	public void performTransientCutToClipboardOperation(Clipboard clipboard, List<? extends ModelElement> elementList);
+
+	public void performTransientCopyToClipboardOperation(Clipboard clipboard, List<? extends ModelElement> elementList, ModelElementFactory factory);
+
+	public void performTransientPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory);
+
+	public <Element extends ModelElement> void performTransientModifyPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory, Modifier<Element> modifier);
+
+	public <Element extends ModelElement> void performTransientModifyPasteClipboardToReferenceOperation(Clipboard clipboard, ModelElementFactory factory, Modifier<Element> modifier);
+
+	// non-transient operations
 
 	public void performAddChildOperation(ModelElement child, History history);
 
@@ -103,11 +122,33 @@ public interface ModelElement {
 
 	Optional<ModelElement> lookupByTypeAndId(String type, String id, int depth);
 
+	public Optional<ModelElement> lookupByFullId(String fid);
+
+//	public Optional<ModelElement> lookupByTechnicalId(long id);
+//
+//	public Optional<ModelElement> lookupByTechnicalId(long id, int depth);
+
 	void unifyIds();
 
 	void sort();
 
 	void sort(Attribute<?> attribute);
+
+	Date getModified();
+
+	void setModified(Date modified);
+
+	long getModifiedBy();
+
+	void setModifiedBy(long modifiedBy);
+
+	Date getCreated();
+
+	void setCreated(Date created);
+
+	long getCreatedBy();
+
+	void setCreatedBy(long createdBy);
 
 	// ----------------------------------------------------
 	

@@ -1,13 +1,15 @@
 package org.wuerthner.sport.attribute;
 
 import org.wuerthner.sport.api.Check;
+import org.wuerthner.sport.api.Mapping;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SelectableIntegerAttribute extends IntegerAttribute {
-	private Map<String, Integer> selectableValueMap = new HashMap<>();
+public class SelectableIntegerAttribute extends IntegerAttribute implements Mapping<Integer> {
+	private Map<String, Integer> selectableValueMap = new LinkedHashMap<>();
 
 	public SelectableIntegerAttribute(String name, String label, Integer defaultValue, Map<String, Integer> values, boolean readonly, boolean required, boolean hidden, String description,
 										   List<Check> dependencies, List<Check> validators) {
@@ -15,6 +17,7 @@ public class SelectableIntegerAttribute extends IntegerAttribute {
 		selectableValueMap.putAll(values);
 	}
 
+	@Override
 	public Map<String, Integer> getValueMap() {
 		return selectableValueMap;
 	}

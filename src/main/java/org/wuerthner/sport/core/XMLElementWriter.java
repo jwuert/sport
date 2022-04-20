@@ -20,6 +20,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+/**
+ * Produces xml documents using &lt;ElementDef&gt; and &lt;ElementRef&gt;
+ */
 public class XMLElementWriter {
 	private final static String timestampFormat = "yyyy-MM-dd HH:mm:ss";
 	

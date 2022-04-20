@@ -15,6 +15,14 @@ public class ModelClipboard<Element extends ModelElement> implements Clipboard<E
     }
 
     @Override
+    public int size() { return elementList.size(); }
+
+    @Override
+    public boolean isEmpty() {
+        return elementList.isEmpty();
+    }
+
+    @Override
     public void setElements(List<Element> elementList) {
         for (Element element : this.elementList) {
             setInClipboard(element, false);

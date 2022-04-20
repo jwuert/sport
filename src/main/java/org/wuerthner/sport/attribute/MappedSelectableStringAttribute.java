@@ -1,13 +1,15 @@
 package org.wuerthner.sport.attribute;
 
 import org.wuerthner.sport.api.Check;
+import org.wuerthner.sport.api.Mapping;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MappedSelectableStringAttribute extends AbstractAttribute<String> {
-	private Map<String, String> selectableValueMap = new HashMap<>();
+public class MappedSelectableStringAttribute extends AbstractAttribute<String> implements Mapping<String> {
+	private Map<String, String> selectableValueMap = new LinkedHashMap<>();
 	
 	public MappedSelectableStringAttribute(String name, String label, String defaultValue, Map<String, String> values, boolean readonly, boolean required, boolean hidden, String description,
 										   List<Check> dependencies, List<Check> validators) {

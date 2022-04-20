@@ -3,10 +3,7 @@ package org.wuerthner.sport.attribute;
 import org.wuerthner.sport.api.Check;
 import org.wuerthner.sport.attribute.SelectableStringAttribute.ElementFilter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AttributeBuilder {
 	protected String id;
@@ -16,10 +13,11 @@ public class AttributeBuilder {
 	protected boolean readonly = false;
 	protected Object defaultValue = null;
 	protected String description = "";
-	protected Map<String, String> values = new HashMap<>();
+	protected Map<String, String> values = new LinkedHashMap<>();
 	protected SelectableStringAttribute.ElementFilter elementFilter = null;
 	protected List<Check> dependencies = new ArrayList<>();
 	protected List<Check> validators = new ArrayList<>();
+	protected boolean writeFile = false;
 	
 	public AttributeBuilder(String id) {
 		this.id = id;
@@ -47,6 +45,11 @@ public class AttributeBuilder {
 	
 	public AttributeBuilder hidden() {
 		hidden = true;
+		return this;
+	}
+
+	public AttributeBuilder writeFile() {
+		writeFile = true;
 		return this;
 	}
 	
@@ -107,7 +110,7 @@ public class AttributeBuilder {
 	}
 
 	public SelectableIntegerAttribute buildSelectableIntegerAttribute() {
-		return new SelectableIntegerAttribute(id, label, (Integer) defaultValue, new HashMap<>(), readonly, required, hidden, description, dependencies, validators);
+		return new SelectableIntegerAttribute(id, label, (Integer) defaultValue, integerValues(), readonly, required, hidden, description, dependencies, validators);
 	}
 
 	public ClassAttribute buildClassAttribute() {
@@ -120,5 +123,22 @@ public class AttributeBuilder {
 
 	public <T> ListAttribute<T> buildListAttribute(Class<T> clasz) {
 		return new ListAttribute<T>(id, label, clasz, (List<T>) defaultValue, readonly, required, hidden, description, dependencies, validators);
+	}
+
+	public FileAttribute buildFileAttribute() {
+		return new FileAttribute(id, label, (String) defaultValue, readonly, required, hidden, writeFile, description, dependencies, validators);
+	}
+
+	public MessageAttribute buildMessage() {
+		return new MessageAttribute(id, label);
+	}
+
+	private Map<String, Integer> integerValues() {
+		Map<String, Integer> integerMap = new LinkedHashMap<>();
+		List<String> valueList = new ArrayList<>(values.keySet());
+		for (int i=0; i<values.size(); i++) {
+			integerMap.put(valueList.get(i), i);
+		}
+		return integerMap;
 	}
 }

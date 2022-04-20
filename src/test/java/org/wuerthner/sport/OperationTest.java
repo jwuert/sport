@@ -28,7 +28,7 @@ public class OperationTest {
                 .build();
 
         History history = new ModelHistory();
-        Clipboard clipboard = new ModelClipboard();
+        Clipboard<ModelElement> clipboard = new ModelClipboard();
 
         ModelElement ma;
         ModelElement ph;
@@ -48,6 +48,7 @@ public class OperationTest {
         assertTrue(ph.getChildren().size()==1);
         assertTrue(ma.getChildren().size()==1);
         assertTrue(clipboard.getElements().size()==1);
+
         assertTrue(clipboard.getElements().get(0).isInClipboard());
         assertTrue(clipboard.getElements().get(0).isDeleted());
         assertTrue(clipboard.getElements().get(0).getId().equals("HX"));
@@ -155,7 +156,7 @@ public class OperationTest {
                 .build();
 
         History history = new ModelHistory();
-        Clipboard clipboard = new ModelClipboard();
+        Clipboard<ModelElement> clipboard = new ModelClipboard();
 
         ModelElement ma;
         ModelElement ph;

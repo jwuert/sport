@@ -21,6 +21,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.wuerthner.sport.api.ModelElement;
 
+/**
+ * Produces xml documents using &lt;(NAME)Def&gt; and &lt;(NAME)Ref&gt;
+ */
 public class XMLWriter {
 	public final static String timestampFormat = "yyyy-MM-dd HH:mm:ss";
 	

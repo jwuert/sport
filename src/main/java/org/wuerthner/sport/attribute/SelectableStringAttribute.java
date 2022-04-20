@@ -1,12 +1,14 @@
 package org.wuerthner.sport.attribute;
 
 import org.wuerthner.sport.api.Check;
+import org.wuerthner.sport.api.DynamicMapping;
+import org.wuerthner.sport.check.True;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SelectableStringAttribute extends AbstractAttribute<String>{
+public class SelectableStringAttribute extends AbstractAttribute<String> implements DynamicMapping {
 	private final ElementFilter elementFilter;
 	private String rootType;
 	
@@ -20,12 +22,14 @@ public class SelectableStringAttribute extends AbstractAttribute<String>{
 		Map<String, String> map = new HashMap<>();
 		return map;
 	}
-	
+
+	@Override
 	public String getElementFilterType() {
 		return (elementFilter != null ? elementFilter.type : "");
 	}
-	
-	// public Check getElementFilterCheck() { return (elementFilter != null ? elementFilter.filter : new True()); }
+
+	@Override
+	public Check getElementFilterCheck() { return (elementFilter != null ? elementFilter.filter : new True()); }
 	
 	@Override
 	public String getValue(String stringValue) {

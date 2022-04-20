@@ -3,6 +3,7 @@ package org.wuerthner.sport.core;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.wuerthner.sport.api.*;
 import org.wuerthner.sport.operation.*;
 
@@ -19,6 +20,11 @@ public class AbstractModelElement implements ModelElement {
 	private boolean inClipboard = false;
 	private ModelElement parent;
 	private ModelElement reference;
+
+	private Date created = new Date();
+	private Date modified = new Date();
+	private long createdBy;
+	private long modifiedBy;
 
 	public AbstractModelElement(String type, List<String> childTypes, List<Attribute<?>> attributes) {
 		this.type = type;
@@ -105,7 +111,12 @@ public class AbstractModelElement implements ModelElement {
 	public Attribute<?>[] getAttributes() {
 		return attributes.toArray(new Attribute<?>[] {});
 	}
-	
+
+	@Override
+	public Attribute<?> getAttribute(String name) {
+		return attributes.stream().filter(a -> a.getName().equals(name)).findAny().get();
+	}
+
 	@Override
 	public boolean isDeleted() {
 		return deleted;
@@ -149,6 +160,10 @@ public class AbstractModelElement implements ModelElement {
 		return theList;
 	}
 
+	//
+	// Transient Operations
+	//
+
 	@Override
 	public void performTransientAddChildOperation(ModelElement child) {
 		synchronized (child) {
@@ -173,6 +188,50 @@ public class AbstractModelElement implements ModelElement {
 			Comparator comparator = getComparator();
 		}
 	}
+
+	@Override
+	public void performTransientCutToClipboardOperation(Clipboard clipboard, List<? extends ModelElement> elementList) {
+		synchronized (clipboard) {
+			Operation operation = new CutToClipboardOperation(clipboard, elementList);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	@Override
+	public void performTransientCopyToClipboardOperation(Clipboard clipboard, List<? extends ModelElement> elementList, ModelElementFactory factory) {
+		synchronized (clipboard) {
+			Operation operation = new CopyToClipboardOperation(clipboard, elementList, factory);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	@Override
+	public void performTransientPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory) {
+		synchronized (clipboard) {
+			Operation operation = new PasteOperation(clipboard, this, factory);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	@Override
+	public <Element extends ModelElement> void performTransientModifyPasteClipboardOperation(Clipboard clipboard, ModelElementFactory factory, Modifier<Element> modifier) {
+		synchronized (clipboard) {
+			Operation operation = new ModifyPasteOperation(clipboard, this, factory, modifier);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	@Override
+	public <Element extends ModelElement> void performTransientModifyPasteClipboardToReferenceOperation(Clipboard clipboard, ModelElementFactory factory, Modifier<Element> modifier) {
+		synchronized (clipboard) {
+			Operation operation = new ModifyPasteToReferenceOperation(clipboard, factory, modifier);
+			this.performTransientOperation(operation);
+		}
+	}
+
+	//
+	// Non-Transient Operations
+	//
 
 	@Override
 	public void performAddChildOperation(ModelElement child, History history) {
@@ -332,7 +391,7 @@ public class AbstractModelElement implements ModelElement {
 	}
 
 	public void setDeletedDeep(boolean deleted) {
-		setDeleted(true);
+		setDeleted(deleted);
 		for (ModelElement child: this.getChildren()) {
 			child.setDeleted(deleted);
 		}
@@ -476,6 +535,60 @@ public class AbstractModelElement implements ModelElement {
 		return optional;
 	}
 
+//	@Override
+//	public Optional<ModelElement> lookupByTechnicalId(long id) {
+//		return lookupByTechnicalId(id, -1);
+//	}
+//
+//	@Override
+//	public Optional<ModelElement> lookupByTechnicalId(long id, int depth) {
+//		Optional<ModelElement> optional = Optional.empty();
+//		if (this.getTechnicalId() == id) {
+//			optional = Optional.of(this);
+//		} else {
+//			if (depth != 0) {
+//				for (ModelElement child : children) {
+//					optional = child.lookupByTechnicalId(id, depth - 1);
+//					if (optional.isPresent()) {
+//						break;
+//					}
+//				}
+//			}
+//		}
+//		return optional;
+//	}
+
+	public Optional<ModelElement> lookupByFullId(String fid) {
+		return lookupByFullId(this, fid);
+	}
+
+	private Optional<ModelElement> lookupByFullId(ModelElement element, String fid) {
+		System.out.println("lu: " + fid);
+		String[] idArray = fid.split("\\.");
+		if (idArray.length==0) {
+			return Optional.empty();
+		} else {
+			System.out.println("  : " + idArray[0]);
+			if (idArray[0].equals(element.getId())) {
+				System.out.println("  !");
+				if (idArray.length==1) {
+					return Optional.of(element);
+				} else {
+					for (ModelElement child : element.getChildren()) {
+						Optional<ModelElement> result = lookupByFullId(child, fid.substring(fid.indexOf('.')+1));
+						if (result.isPresent()) {
+							System.out.println(" return: " + result.get().getFullId());
+							return result;
+						}
+					}
+					return Optional.empty();
+				}
+			} else {
+				return Optional.empty();
+			}
+		}
+	}
+
 	public void unifyIds() {
 		long offset = 1000;
 		setUniqueId(this, offset);
@@ -491,5 +604,45 @@ public class AbstractModelElement implements ModelElement {
 			id = setUniqueId(child, id);
 		}
 		return id;
+	}
+
+	@Override
+	public Date getModified() {
+		return modified;
+	}
+
+	@Override
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
+	@Override
+	public long getModifiedBy() {
+		return modifiedBy;
+	}
+
+	@Override
+	public void setModifiedBy(long modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
+
+	@Override
+	public Date getCreated() {
+		return created;
+	}
+
+	@Override
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	@Override
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	@Override
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
 	}
 }

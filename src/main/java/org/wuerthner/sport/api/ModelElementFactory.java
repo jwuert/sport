@@ -1,9 +1,14 @@
 package org.wuerthner.sport.api;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public interface ModelElementFactory {
 	public  <T extends ModelElement> T createElement(String typeName);
+
+	public List<ModelElement> createElementList();
 	
 	default <T> ModelElement copyTree(ModelElement original) {
 		ModelElement copy = this.createElement(original.getType());
@@ -20,4 +25,22 @@ public interface ModelElementFactory {
 		}
 		return copy;
 	}
+
+	default String getRootElementType() {
+		return null;
+	}
+
+	default ActionProvider getActionProvider() {
+		return null;
+	}
+
+	default Optional<History> getHistory() {
+		return Optional.empty();
+	}
+
+	default Optional<Clipboard> getClipboard() {
+		return Optional.empty();
+	}
+
+
 }
