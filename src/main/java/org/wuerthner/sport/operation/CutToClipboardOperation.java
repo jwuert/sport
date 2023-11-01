@@ -1,6 +1,5 @@
 package org.wuerthner.sport.operation;
 
-import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.wuerthner.sport.api.Clipboard;
 import org.wuerthner.sport.api.ModelElement;
 import org.wuerthner.sport.api.Operation;

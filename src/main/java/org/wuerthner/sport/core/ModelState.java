@@ -1,6 +1,5 @@
 package org.wuerthner.sport.core;
 
-import jdk.internal.module.IllegalAccessLogger;
 import org.wuerthner.sport.api.ModelElement;
 
 public class ModelState {
