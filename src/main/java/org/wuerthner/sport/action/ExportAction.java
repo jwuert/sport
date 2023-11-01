@@ -4,7 +4,7 @@ import org.wuerthner.sport.api.Action;
 import org.wuerthner.sport.api.Attribute;
 import org.wuerthner.sport.api.ModelElement;
 import org.wuerthner.sport.api.ModelElementFactory;
-import org.wuerthner.sport.attribute.AttributeBuilder;
+import org.wuerthner.sport.attribute.FileAttribute;
 import org.wuerthner.sport.core.ModelState;
 import org.wuerthner.sport.core.XMLWriter;
 
@@ -32,10 +32,9 @@ public class ExportAction implements Action {
     @Override
     public List<Attribute<?>> getParameterList(ModelElement selectedElement) {
         List<Attribute<?>> parameterList = new ArrayList<>();
-        Attribute<?> attribute = new AttributeBuilder(PARAMETER_FILE)
+        Attribute<?> attribute = new FileAttribute(PARAMETER_FILE)
                 .label("File")
-                .writeFile()
-                .buildFileAttribute();
+                .writeFile();
         parameterList.add(attribute);
         return parameterList;
     }

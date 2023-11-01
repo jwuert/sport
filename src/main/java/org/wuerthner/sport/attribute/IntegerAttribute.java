@@ -1,16 +1,13 @@
 package org.wuerthner.sport.attribute;
 
-import org.wuerthner.sport.api.Check;
+import org.wuerthner.sport.api.attributetype.Text;
 
-import java.util.List;
+public class IntegerAttribute extends AbstractAttribute<Integer,IntegerAttribute,Text> implements Text {
 
-public class IntegerAttribute extends AbstractAttribute<Integer> {
-
-	public IntegerAttribute(String name, String label, Integer defaultValue, boolean readonly, boolean required, boolean hidden, String description, List<Check> dependencies,
-			List<Check> validators) {
-		super(name, label, Integer.class, defaultValue, readonly, required, hidden, description, dependencies, validators);
+	public IntegerAttribute(String name) {
+		super(name, Integer.class, Text.class);
 	}
-	
+
 	@Override
 	public Integer getValue(String stringValue) {
 		if (stringValue == null || stringValue.trim().equals("")) {

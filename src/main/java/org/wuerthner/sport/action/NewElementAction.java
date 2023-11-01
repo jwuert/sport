@@ -4,8 +4,9 @@ import org.wuerthner.sport.api.Action;
 import org.wuerthner.sport.api.Attribute;
 import org.wuerthner.sport.api.ModelElement;
 import org.wuerthner.sport.api.ModelElementFactory;
-import org.wuerthner.sport.attribute.AttributeBuilder;
 import org.wuerthner.sport.attribute.IdAttribute;
+import org.wuerthner.sport.attribute.SelectableStringAttribute;
+import org.wuerthner.sport.attribute.StringAttribute;
 import org.wuerthner.sport.core.Model;
 import org.wuerthner.sport.core.ModelState;
 
@@ -30,22 +31,20 @@ public class NewElementAction implements Action {
 
     @Override
     public boolean isEnabled(ModelElement selectedElement, ModelElementFactory factory) {
-        return (selectedElement != null);
+        return (selectedElement != null && !selectedElement.getChildTypes().isEmpty());
     }
 
     @Override
     public List<Attribute<?>> getParameterList(ModelElement selectedElement) {
         List<Attribute<?>> parameterList = new ArrayList<>();
         if (selectedElement != null) {
-            Attribute<?> name = new AttributeBuilder(PARAMETER_NAME)
+            Attribute<?> name = new StringAttribute(PARAMETER_NAME)
                     .label("Name")
-                    .defaultValue("Unnamed")
-                    .buildStringAttribute();
+                    .defaultValue("Unnamed");
             parameterList.add(name);
-            Attribute<?> type = new AttributeBuilder(PARAMETER_TYPE)
+            Attribute<?> type = new SelectableStringAttribute(PARAMETER_TYPE)
                     .label("Type")
-                    .values(selectedElement.getChildTypes().toArray(new String[]{}))
-                    .buildMappedSelectable();
+                    .values(selectedElement.getChildTypes().toArray(new String[]{}));
             parameterList.add(type);
         }
         return parameterList;

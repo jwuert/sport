@@ -16,7 +16,7 @@ public class ModelElementComparator<TYPE> implements Comparator<ModelElement> {
 
     public ModelElementComparator(Attribute<TYPE> attribute) {
         attributeOptional = Optional.of(attribute);
-        Class<? extends TYPE> type = attribute.getAttributeType();
+        Class<? extends TYPE> type = attribute.getValueType();
         if (!type.isAssignableFrom(Comparable.class)) {
             throw new RuntimeException("Attribute " + attribute.getName() + " must be of type 'Comparable'!");
         }

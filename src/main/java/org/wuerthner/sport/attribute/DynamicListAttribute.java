@@ -1,22 +1,35 @@
 package org.wuerthner.sport.attribute;
 
-import org.wuerthner.sport.api.Check;
+import org.wuerthner.sport.api.ModelElement;
+import org.wuerthner.sport.api.attributetype.DynamicMultiSelect;
+import org.wuerthner.sport.core.ElementFilter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-public class ListAttribute<T> extends AbstractAttribute<List<T>> {
+public class DynamicListAttribute<T> extends AbstractAttribute<List<T>, DynamicListAttribute<T>, DynamicMultiSelect> implements DynamicMultiSelect {
     public final static String SEP = "\\|";
     public final Class<T> elementType;
+    private ElementFilter elementFilter;
 
-    public ListAttribute(String name, String label, Class<T> clasz, List<T> defaultValue, boolean readonly,
-                         boolean required, boolean hidden, String description, List<Check> dependencies, List<Check> validators) {
-        super(name, label, (Class<? extends List<T>>) ((Class<?>)List.class), defaultValue, readonly, required, hidden, description, dependencies, validators);
+    public DynamicListAttribute(String name, Class<T> clasz) {
+        super(name, (Class<? extends List<T>>) ((Class<?>)List.class), DynamicMultiSelect.class);
         this.elementType = clasz;
     }
+
+    public DynamicListAttribute<T> addFilter(ElementFilter elementFilter) {
+        this.elementFilter = elementFilter;
+        return this;
+    }
+
+    @Override
+    public ElementFilter getElementFilter() { return elementFilter; }
 
     @Override
     public List<T> getValue(String stringValue) {
@@ -114,4 +127,18 @@ public class ListAttribute<T> extends AbstractAttribute<List<T>> {
         return result;
     }
 
+    @Override
+    public Map<String, Object> getValueMap(ModelElement selectedElement) {
+        ModelElement root = selectedElement.getRoot();
+        List<ModelElement> resultList = root.lookupByType(elementFilter.type)
+                .stream()
+                .filter(el -> elementFilter.filter.evaluate(el, null))
+                .collect(Collectors.toList());
+
+        Map<String, Object> map = new HashMap<>();
+        for (ModelElement el : resultList) {
+            map.put(el.getAttributeValue("id"), el.getAttributeValue("id"));
+        }
+        return map;
+    }
 }

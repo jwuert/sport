@@ -1,19 +1,18 @@
 package org.wuerthner.sport;
 
 import org.wuerthner.sample.*;
-import org.wuerthner.sport.api.Attribute;
+import org.wuerthner.sport.api.ActionProvider;
 import org.wuerthner.sport.api.History;
 import org.wuerthner.sport.api.ModelElement;
 import org.wuerthner.sport.api.ModelElementFactory;
-import org.wuerthner.sport.attribute.AttributeBuilder;
-import org.wuerthner.sport.attribute.IdAttribute;
-import org.wuerthner.sport.attribute.ListAttribute;
 import org.wuerthner.sport.core.*;
+import org.wuerthner.sport.util.fop.FOPBuilder;
+import org.wuerthner.sport.util.fop.FOPProcessor;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Test {
@@ -55,6 +54,21 @@ public class Test {
 
         String xml = os.toString();
         System.out.println(xml);
+    }
+
+    @org.junit.Test
+    public void testReport() {
+        List<String> modelChanges = new ArrayList<>();
+        String modelVersion = "?";
+        ActionProvider actionProvider = factory.getActionProvider();
+        FOPBuilder fb = new FOPBuilder(factory.getAppName(), "Model: " + modelVersion, actionProvider, modelChanges);
+        // List<ModelElement> list = Stream.of(typesReduced).map(type -> (ModelElement) factory.createElement(type)).collect(Collectors.toList());
+        List<ModelElement> list = factory.createElementList();
+        File fopFile = fb.collect(list);
+        File pdfFile = new File(fopFile.getAbsolutePath().replaceAll("\\.fop","-X.pdf"));
+        System.out.println("Specification file: " + pdfFile.getAbsolutePath());
+        FOPProcessor fp = new FOPProcessor(fopFile, pdfFile);
+        fp.run();
     }
 
     @org.junit.Test

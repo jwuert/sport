@@ -1,8 +1,7 @@
 package org.wuerthner.sport.action;
 
 import org.wuerthner.sport.api.*;
-import org.wuerthner.sport.attribute.AttributeBuilder;
-import org.wuerthner.sport.core.Model;
+import org.wuerthner.sport.attribute.FileAttribute;
 import org.wuerthner.sport.core.ModelState;
 import org.wuerthner.sport.core.XMLReader;
 
@@ -29,9 +28,8 @@ public class ImportAction implements Action {
     @Override
     public List<Attribute<?>> getParameterList(ModelElement selectedElement) {
         List<Attribute<?>> parameterList = new ArrayList<>();
-        Attribute<?> attribute = new AttributeBuilder(PARAMETER_FILE)
-                .label("File")
-                .buildFileAttribute();
+        Attribute<?> attribute = new FileAttribute(PARAMETER_FILE)
+                .label("File");
         parameterList.add(attribute);
         return parameterList;
     }

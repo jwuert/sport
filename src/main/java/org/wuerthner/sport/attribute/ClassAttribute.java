@@ -1,17 +1,13 @@
 package org.wuerthner.sport.attribute;
 
-import org.wuerthner.sport.api.Check;
+import org.wuerthner.sport.api.attributetype.Text;
 
-import java.util.List;
-
-public class ClassAttribute extends AbstractAttribute<Class<?>> {
+public class ClassAttribute extends AbstractAttribute<Class<?>,ClassAttribute,Text> implements Text {
 	
-	@SuppressWarnings("unchecked")
-	public ClassAttribute(String name, String label, Class<?> defaultValue, boolean readonly, boolean required, boolean hidden, String description, List<Check> dependencies,
-			List<Check> validators) {
-		super(name, label, (Class<Class<?>>) (Class<?>) (Class<?>) Class.class, defaultValue, readonly, required, hidden, description, dependencies, validators);
+	public ClassAttribute(String name) {
+		super(name, (Class<Class<?>>) (Class<?>) (Class<?>) Class.class, Text.class);
 	}
-	
+
 	@Override
 	public Class<?> getValue(String stringValue) {
 		if (stringValue == null || stringValue.trim().equals("")) {

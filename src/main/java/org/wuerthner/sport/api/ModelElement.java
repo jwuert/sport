@@ -5,7 +5,9 @@ import org.wuerthner.sport.operation.Transaction;
 import java.util.*;
 
 public interface ModelElement {
-	
+
+	void addAttribute(Attribute<?> attribute);
+
 	long getTechnicalId();
 	
 	void setTechnicalId(long id);
@@ -149,6 +151,14 @@ public interface ModelElement {
 	long getCreatedBy();
 
 	void setCreatedBy(long createdBy);
+
+	default List<String> getDescription() {
+		return new ArrayList<>();
+	}
+
+	Map<Attribute<?>, List<Check>> getDependencies();
+
+	Map<Attribute<?>, List<Check>> getValidatorMap();
 
 	// ----------------------------------------------------
 	

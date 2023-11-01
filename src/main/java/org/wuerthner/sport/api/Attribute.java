@@ -5,8 +5,10 @@ import java.util.Optional;
 
 public interface Attribute<T> {
 	
-	Class<? extends T> getAttributeType();
-	
+	Class<? extends T> getValueType();
+
+	String getInputType();
+
 	String getName();
 	
 	Optional<T> getDefaultValue();

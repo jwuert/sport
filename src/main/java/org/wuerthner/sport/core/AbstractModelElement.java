@@ -39,6 +39,14 @@ public class AbstractModelElement implements ModelElement {
 		}
 		this.id = 0;
 	}
+
+	@Override
+	public void addAttribute(Attribute<?> attribute) {
+		this.attributes.add(attribute);
+		if (attribute.hasDefaultValue()) {
+			attributeMap.put(attribute.getName(), attribute.getDefaultValue().get().toString());
+		}
+	}
 	
 	@Override
 	public long getTechnicalId() {
@@ -421,7 +429,7 @@ public class AbstractModelElement implements ModelElement {
 	public Map<String, Class<?>> getAttributeTypeMap() {
 		Map<String, Class<?>> map = new HashMap<>();
 		for (Attribute<?> attribute : this.getAttributes()) {
-			map.put(attribute.getName(), attribute.getAttributeType());
+			map.put(attribute.getName(), attribute.getValueType());
 		}
 		return map;
 	}
@@ -457,8 +465,8 @@ public class AbstractModelElement implements ModelElement {
 		Optional<Attribute<?>> optionalAttribute = lookupAttribute(attribute.getName());
 		if (optionalAttribute.isPresent()) {
 			if (value != null) {
-				if (!optionalAttribute.get().getAttributeType().isAssignableFrom(value.getClass())) {
-					throw new RuntimeException("Value '" + value + "' cannot be assigned to attribute '" + attribute.getName() + "' of type " + attribute.getAttributeType());
+				if (!optionalAttribute.get().getValueType().isAssignableFrom(value.getClass())) {
+					throw new RuntimeException("Value '" + value + "' cannot be assigned to attribute '" + attribute.getName() + "' of type " + attribute.getValueType());
 				}
 			}
 		} else {
@@ -473,7 +481,7 @@ public class AbstractModelElement implements ModelElement {
 				try {
 					optionalAttribute.get().getValue(value);
 				} catch (Exception e) {
-					throw new RuntimeException("Value '" + value + "' cannot be assigned to attribute '" + key + "' of type " + optionalAttribute.get().getAttributeType());
+					throw new RuntimeException("Value '" + value + "' cannot be assigned to attribute '" + key + "' of type " + optionalAttribute.get().getValueType());
 				}
 			}
 		} else {
@@ -644,5 +652,23 @@ public class AbstractModelElement implements ModelElement {
 	@Override
 	public void setCreatedBy(long createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	@Override
+	public Map<Attribute<?>, List<Check>> getDependencies() {
+		Map<Attribute<?>, List<Check>> dependencyMap = new HashMap<>();
+		for (Attribute<?> attribute : attributes) {
+			dependencyMap.put(attribute, attribute.getDependencies());
+		}
+		return dependencyMap;
+	}
+
+	@Override
+	public Map<Attribute<?>, List<Check>> getValidatorMap() {
+		Map<Attribute<?>, List<Check>> validatorMap = new HashMap<>();
+		for (Attribute<?> attribute : attributes) {
+			validatorMap.put(attribute, attribute.getValidators());
+		}
+		return validatorMap;
 	}
 }

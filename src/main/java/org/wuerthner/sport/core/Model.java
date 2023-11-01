@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public class Model {
     public final static String SEP = System.lineSeparator();
+    public final static String REFERENCE_FILE = "referenceFile";
     public final static int MAX_ID_LENGTH = 40;
 
     public static String makeString(ModelElement element) {

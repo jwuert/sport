@@ -1,20 +1,28 @@
 package org.wuerthner.sport.attribute;
 
-import org.wuerthner.sport.api.Check;
-import org.wuerthner.sport.api.Mapping;
+import org.wuerthner.sport.api.attributetype.StaticMapping;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-public class SelectableIntegerAttribute extends IntegerAttribute implements Mapping<Integer> {
+public class SelectableIntegerAttribute extends AbstractAttribute<Integer,SelectableIntegerAttribute,StaticMapping> implements StaticMapping<Integer> {
 	private Map<String, Integer> selectableValueMap = new LinkedHashMap<>();
 
-	public SelectableIntegerAttribute(String name, String label, Integer defaultValue, Map<String, Integer> values, boolean readonly, boolean required, boolean hidden, String description,
-										   List<Check> dependencies, List<Check> validators) {
-		super(name, label, defaultValue, readonly, required, hidden, description, dependencies, validators);
-		selectableValueMap.putAll(values);
+	public SelectableIntegerAttribute(String name) {
+		super(name, Integer.class, StaticMapping.class);
+	}
+
+	public SelectableIntegerAttribute values(String[] selectableValues) {
+		int i=0;
+		for (String value : selectableValues) {
+			this.selectableValueMap.put(value, i++);
+		}
+		return this;
+	}
+
+	public SelectableIntegerAttribute addValue(String key, int value) {
+		this.selectableValueMap.put(key, value);
+		return this;
 	}
 
 	@Override
@@ -31,5 +39,18 @@ public class SelectableIntegerAttribute extends IntegerAttribute implements Mapp
 			}
 		}
 		return key;
+	}
+
+	@Override
+	public Integer getValue(String stringValue) {
+		if (stringValue == null || stringValue.trim().equals("")) {
+			return null;
+		} else {
+			if (stringValue.matches("^\\-?\\d+$")) {
+				return Integer.valueOf(stringValue);
+			} else {
+				return null;
+			}
+		}
 	}
 }

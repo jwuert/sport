@@ -4,7 +4,7 @@ import org.wuerthner.sport.api.Action;
 import org.wuerthner.sport.api.Attribute;
 import org.wuerthner.sport.api.ModelElement;
 import org.wuerthner.sport.api.ModelElementFactory;
-import org.wuerthner.sport.attribute.AttributeBuilder;
+import org.wuerthner.sport.attribute.MessageAttribute;
 import org.wuerthner.sport.core.ModelState;
 
 import java.util.*;
@@ -31,9 +31,8 @@ public class DeleteAction implements Action {
     public List<Attribute<?>> getParameterList(ModelElement selectedElement) {
         List<Attribute<?>> parameterList = new ArrayList<>();
         if (selectedElement != null && selectedElement.getParent()!=selectedElement) {
-            Attribute<?> attribute = new AttributeBuilder(PARAMETER_DELETE)
-                    .label("Delete element(s): " + selectedElement.getId())
-                    .buildMessage();
+            Attribute<?> attribute = new MessageAttribute(PARAMETER_DELETE)
+                    .label("Delete element(s): " + selectedElement.getId());
             parameterList.add(attribute);
         }
         return parameterList;

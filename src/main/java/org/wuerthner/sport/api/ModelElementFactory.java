@@ -1,5 +1,6 @@
 package org.wuerthner.sport.api;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,5 +43,9 @@ public interface ModelElementFactory {
 		return Optional.empty();
 	}
 
+	default Optional<Executor<File>> getPdfViewerExecutor() { return Optional.empty(); }
 
+	default String getFileExtension() { return "sxml"; }
+
+	default String getAppName() { return ""; }
 }

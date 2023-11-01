@@ -13,6 +13,8 @@ public interface Action {
     public final static String ROOT = "root";
     public final static String SELECTION = "selection";
     public final static String VALIDATION = "validation";
+    public static final String DELTA = "delta";
+    public static final String NEW = "new";
 
     public String getId();
 
@@ -32,5 +34,9 @@ public interface Action {
 
     public default Map<String,Object> invoke(ModelElementFactory factory, ModelState modelState, Map<String,String> parameterMap) {
         return new HashMap<>();
+    }
+
+    default List<String> getDescription() {
+        return new ArrayList<>();
     }
 }

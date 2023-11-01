@@ -7,38 +7,76 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractAttribute<T> implements Attribute<T> {
+public abstract class AbstractAttribute<T,AT,IT> implements Attribute<T> {
 	
-	public final String name;
-	public final String label;
-	public final Class<? extends T> attributeType;
-	public final Optional<T> defaultValue;
-	public final boolean readonly;
-	public final boolean required;
-	public final boolean hidden;
-	public final Optional<String> description;
-	public final List<Check> dependencies = new ArrayList<>();
-	public final List<Check> validators = new ArrayList<>();
-	
-	public AbstractAttribute(String name, String label, Class<? extends T> attributeType, T defaultValue, boolean readonly,
-							 boolean required, boolean hidden, String description, List<Check> dependencies, List<Check> validators) {
+	private final String name;
+	private final Class<? extends T> valueType;
+	private final Class<IT> inputType;
+	private String label;
+	private Optional<T> defaultValue = Optional.empty();
+	private boolean readonly = false;
+	private boolean required = false;
+	private boolean hidden = false;
+	private Optional<String> description = Optional.empty();
+	private List<Check> dependencies = new ArrayList<>();
+	private List<Check> validators = new ArrayList<>();
+
+	protected AbstractAttribute(String name, Class<? extends T> valueType, Class<IT> inputType) {
 		this.name = name;
+		this.valueType = valueType;
+		this.inputType = inputType;
+	}
+
+	public AT label(String label) {
 		this.label = label;
-		this.attributeType = attributeType;
+		return (AT) this;
+	}
+
+	public AT description(String description) {
+		this.description = Optional.ofNullable(description);
+		return (AT) this;
+	}
+
+	public AT defaultValue(T defaultValue) {
 		this.defaultValue = defaultValue != null ? Optional.of(defaultValue) : Optional.empty();
-		this.readonly = readonly;
-		this.required = required;
-		this.hidden = hidden;
-		this.description = Optional.of(description);
-		this.getDependencies().addAll(dependencies);
-		this.getValidators().addAll(validators);
+		return (AT) this;
 	}
-	
+
+	public AT required() {
+		this.required = true;
+		return (AT) this;
+	}
+
+	public AT readonly() {
+		this.readonly = true;
+		return (AT) this;
+	}
+
+	public AT hidden() {
+		this.hidden = true;
+		return (AT) this;
+	}
+
+	public AT addDependency(Check dependency) {
+		this.dependencies.add(dependency);
+		return (AT) this;
+	}
+
+	public AT addValidation(Check validator) {
+		this.validators.add(validator);
+		return (AT) this;
+	}
+
 	@Override
-	public Class<? extends T> getAttributeType() {
-		return attributeType;
+	public Class<? extends T> getValueType() {
+		return valueType;
 	}
-	
+
+	@Override
+	public String getInputType() {
+		return inputType.getSimpleName();
+	}
+
 	@Override
 	public String getName() {
 		return name;
@@ -87,7 +125,7 @@ public abstract class AbstractAttribute<T> implements Attribute<T> {
 	
 	@Override
 	public String toString() {
-		return "Attribute<" + attributeType.getSimpleName() + ">:" + getName();
+		return "Attribute<" + valueType.getSimpleName() + ">:" + getName();
 	}
 	
 	@Override

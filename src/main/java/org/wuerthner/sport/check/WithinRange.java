@@ -3,18 +3,17 @@ package org.wuerthner.sport.check;
 import org.wuerthner.sport.api.Attribute;
 import org.wuerthner.sport.api.ModelElement;
 
-public class RangeValidation extends AbstractCheck {
+public class WithinRange extends AbstractCheck {
 	private final int min;
 	private final int max;
 	
-	public RangeValidation(int min, int max, String message) {
-		super("RangeValidation", message, "min", "" + min, "max", "" + max);
+	public WithinRange(int min, int max) {
+		super("RangeValidation");
 		this.min = min;
 		this.max = max;
-	}
-	
-	public RangeValidation(int min, int max) {
-		this(min, max, "Value must be between " + min + " and " + max);
+		addProperty("min", min);
+		addProperty("max", max);
+		message("Value must be between " + min + " and " + max);
 	}
 	
 	@Override

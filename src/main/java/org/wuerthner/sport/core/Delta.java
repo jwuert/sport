@@ -26,17 +26,18 @@ public class Delta {
 
     public void addValueDifference(ModelElement element1, ModelElement element2, String attributeId, String value1, String value2) {
         verifyIdAndType(element1, element2);
-        Difference diff = new Difference(Type.Value, element1.getFullId(), element1.getType(), value1, value2, attributeId);
+        String attributeLabel = element1.getAttribute(attributeId).getLabel();
+        Difference diff = new Difference(Type.Value, element1.getFullId(), element1.getType(), value1, value2, attributeId, attributeLabel);
         add(diff);
     }
 
     public void addOnlyInFirstDifference(ModelElement element) {
-        Difference diff = new Difference(Type.Element, element.getFullId(), element.getType(), "exists only in first", "-", ""); // "only in first"
+        Difference diff = new Difference(Type.Element, element.getFullId(), element.getType(), "exists only in first", "-", "", ""); // "only in first"
         add(diff);
     }
 
     public void addOnlyInSecondDifference(ModelElement element) {
-        Difference diff = new Difference(Type.Element, element.getFullId(), element.getType(), "-", "exists only in second", ""); // "only in second"
+        Difference diff = new Difference(Type.Element, element.getFullId(), element.getType(), "-", "exists only in second", "", ""); // "only in second"
         add(diff);
     }
 
@@ -139,10 +140,10 @@ public class Delta {
 
     private void verifyIdAndType(ModelElement tree1, ModelElement tree2) {
         if (tree1.getType()==null) {
-            add(new Difference(Type.Error, tree1.getFullId(), tree1.getType(), "first missing type", "-", ""));
+            add(new Difference(Type.Error, tree1.getFullId(), tree1.getType(), "first missing type", "-", "", ""));
         }
         if (tree2.getType()==null) {
-            add(new Difference(Type.Error, tree2.getFullId(), tree2.getType(), "-", "second missing type", ""));
+            add(new Difference(Type.Error, tree2.getFullId(), tree2.getType(), "-", "second missing type", "", ""));
         }
         if (tree1.getType()!=null && tree2.getType()!=null) {
             if (!tree1.getId().equals(tree2.getId())) {
@@ -172,6 +173,7 @@ public class Delta {
         public final String id;
         public final String fqid;
         public final String attributeId;
+        public final String attributeLabel;
         public final String elementType;
         public final String value1;
         public final String value2;
@@ -181,6 +183,7 @@ public class Delta {
             this.type = type;
             this.fqid = fqid==null ? "" : fqid;
             this.attributeId = ".";
+            this.attributeLabel = "";
             this.elementType = elementType==null ? "" : elementType;
             this.id = cutId(this.fqid);
             String msg = "";
@@ -214,10 +217,11 @@ public class Delta {
             }
         }
 
-        public Difference(Type type, String fqid, String elementType, String value1, String value2, String attributeId) {
+        public Difference(Type type, String fqid, String elementType, String value1, String value2, String attributeId, String attributeLabel) {
             this.type = type;
             this.fqid = fqid==null ? "" : fqid;
             this.attributeId = attributeId;
+            this.attributeLabel = attributeLabel;
             this.elementType = elementType==null ? "" : elementType;
             List<String> list = Arrays.asList(value1==null?"-":value1, value2==null?"-":value2);
             this.value1 = list.get(0);

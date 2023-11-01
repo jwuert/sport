@@ -1,48 +1,52 @@
 package org.wuerthner.sport.attribute;
 
-import org.wuerthner.sport.api.Check;
-import org.wuerthner.sport.api.DynamicMapping;
-import org.wuerthner.sport.check.True;
+import org.wuerthner.sport.api.attributetype.StaticMapping;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class SelectableStringAttribute extends AbstractAttribute<String> implements DynamicMapping {
-	private final ElementFilter elementFilter;
-	private String rootType;
-	
-	public SelectableStringAttribute(String name, String label, String defaultValue, ElementFilter elementFilter, boolean readonly, boolean required, boolean hidden, String description,
-			List<Check> dependencies, List<Check> validators) {
-		super(name, label, String.class, defaultValue, readonly, required, hidden, description, dependencies, validators);
-		this.elementFilter = elementFilter;
+public class SelectableStringAttribute extends AbstractAttribute<String, SelectableStringAttribute,StaticMapping> implements StaticMapping<String> {
+	private Map<String, String> selectableValueMap = new LinkedHashMap<>();
+
+	public SelectableStringAttribute(String name) {
+		super(name, String.class, StaticMapping.class);
 	}
-	
+
+	public SelectableStringAttribute values(String[] selectableValues) {
+		for (String value : selectableValues) {
+			this.selectableValueMap.put(value, value);
+		}
+		return this;
+	}
+
+	public SelectableStringAttribute values(Map<String, String> selectableValues) {
+		this.selectableValueMap.putAll(selectableValues);
+		return this;
+	}
+
+	public SelectableStringAttribute addValue(String key, String value) {
+		this.selectableValueMap.put(key, value);
+		return this;
+	}
+
+	@Override
 	public Map<String, String> getValueMap() {
-		Map<String, String> map = new HashMap<>();
-		return map;
+		return selectableValueMap;
 	}
-
-	@Override
-	public String getElementFilterType() {
-		return (elementFilter != null ? elementFilter.type : "");
+	
+	public String getStringKey(String stringValue) {
+		String key = "";
+		for (Map.Entry<String, String> entry : selectableValueMap.entrySet()) {
+			if (entry.getValue().equals(stringValue)) {
+				key = entry.getKey();
+				break;
+			}
+		}
+		return key;
 	}
-
-	@Override
-	public Check getElementFilterCheck() { return (elementFilter != null ? elementFilter.filter : new True()); }
 	
 	@Override
 	public String getValue(String stringValue) {
 		return stringValue;
-	}
-	
-	public static class ElementFilter {
-		public final String type;
-		public final Check filter;
-		
-		public ElementFilter(String type, Check filter) {
-			this.type = type;
-			this.filter = filter;
-		}
 	}
 }

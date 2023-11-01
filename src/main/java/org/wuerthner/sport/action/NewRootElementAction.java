@@ -4,7 +4,6 @@ import org.wuerthner.sport.api.Action;
 import org.wuerthner.sport.api.Attribute;
 import org.wuerthner.sport.api.ModelElement;
 import org.wuerthner.sport.api.ModelElementFactory;
-import org.wuerthner.sport.attribute.AttributeBuilder;
 import org.wuerthner.sport.core.ModelState;
 
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ public class NewRootElementAction implements Action {
         if (factory != null) {
             ModelElement newRootElement = factory.createElement(factory.getRootElementType());
             result.put(ROOT, newRootElement);
+            result.put(NEW, true);
         }
         return result;
     }

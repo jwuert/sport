@@ -9,14 +9,13 @@ public class AttributeEquality<TYPE> extends AbstractCheck {
 	private final Attribute<TYPE> attribute;
 	private final TYPE value;
 	
-	public AttributeEquality(Attribute<TYPE> attribute, TYPE value, String message) {
-		super("AttributeEquality", message, "attribute", attribute.getName(), "value", attribute.getStringPresentation(value));
+	public AttributeEquality(Attribute<TYPE> attribute, TYPE value) {
+		super("AttributeEquality");
 		this.attribute = attribute;
 		this.value = value;
-	}
-	
-	public AttributeEquality(Attribute<TYPE> attribute, TYPE value) {
-		this(attribute, value, "Value must be '" + value + "'");
+		addProperty("attribute", attribute.getName());
+		addProperty("value", attribute.getStringPresentation(value));
+		message("Value must be '" + value + "'");
 	}
 	
 	@Override

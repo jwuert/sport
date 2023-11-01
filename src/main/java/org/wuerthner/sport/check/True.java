@@ -4,12 +4,9 @@ import org.wuerthner.sport.api.Attribute;
 import org.wuerthner.sport.api.ModelElement;
 
 public class True extends AbstractCheck {
-    public True(String message) {
-        super("True", message);
-    }
-
     public True() {
-        this("True");
+        super("True");
+        message("Is 'true'");
     }
 
     @Override

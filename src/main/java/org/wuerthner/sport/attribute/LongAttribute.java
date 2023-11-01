@@ -1,16 +1,13 @@
 package org.wuerthner.sport.attribute;
 
-import org.wuerthner.sport.api.Check;
+import org.wuerthner.sport.api.attributetype.Text;
 
-import java.util.List;
+public class LongAttribute extends AbstractAttribute<Long,LongAttribute,Text> implements Text {
 
-public class LongAttribute extends AbstractAttribute<Long> {
-
-	public LongAttribute(String name, String label, Long defaultValue, boolean readonly, boolean required, boolean hidden, String description, List<Check> dependencies,
-                         List<Check> validators) {
-		super(name, label, Long.class, defaultValue, readonly, required, hidden, description, dependencies, validators);
+	public LongAttribute(String name) {
+		super(name, Long.class, Text.class);
 	}
-	
+
 	@Override
 	public Long getValue(String stringValue) {
 		if (stringValue == null || stringValue.trim().equals("")) {

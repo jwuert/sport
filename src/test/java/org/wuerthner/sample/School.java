@@ -2,7 +2,7 @@ package org.wuerthner.sample;
 
 import java.util.Arrays;
 
-import org.wuerthner.sport.attribute.AttributeBuilder;
+
 import org.wuerthner.sport.attribute.BooleanAttribute;
 import org.wuerthner.sport.attribute.IdAttribute;
 import org.wuerthner.sport.attribute.IntegerAttribute;
@@ -13,19 +13,16 @@ public class School extends AbstractModelElement {
 	public final static String TYPE = "School";
 
 	public final static IdAttribute ID = new IdAttribute();
-	public final static StringAttribute NAME = new AttributeBuilder("name")
+	public final static StringAttribute NAME = new StringAttribute("name")
 			.label("Name")
-			.required()
-			.buildStringAttribute();
+			.required();
 
-	public final static BooleanAttribute ACTIVE = new AttributeBuilder("active")
-			.label("Active")
-			.buildBooleanAttribute();
+	public final static BooleanAttribute ACTIVE = new BooleanAttribute("active")
+			.label("Active");
 
-	public final static IntegerAttribute REP = new AttributeBuilder("reputation")
+	public final static IntegerAttribute REP = new IntegerAttribute("reputation")
 			.label("Reputation")
-			.required()
-			.buildIntegerAttribute();
+			.required();
 
 	public School() {
 		super(TYPE, Arrays.asList(Course.TYPE), Arrays.asList(ID, NAME, ACTIVE, REP));
