@@ -26,7 +26,6 @@ repositories {
 
 spotbugs {
 	ignoreFailures = true
-	excludeFilter = file("spotbugsExclude.xml")
 	reportLevel = "high"
 }
 
