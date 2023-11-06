@@ -1,8 +1,8 @@
 package org.wuerthner.sport.action;
 
-import org.wuerthner.ereport.Report;
-import org.wuerthner.ereport.SubReport;
-import org.wuerthner.ereport.generator.fop.FOPBuilder;
+//import org.wuerthner.ereport.Report;
+//import org.wuerthner.ereport.SubReport;
+//import org.wuerthner.ereport.generator.fop.FOPBuilder;
 import org.wuerthner.sport.api.*;
 import org.wuerthner.sport.attribute.IdAttribute;
 import org.wuerthner.sport.core.ModelState;
@@ -27,6 +27,7 @@ public class GenerateReportAction implements Action {
     @Override
     public Map<String,Object> invoke(ModelElementFactory factory, ModelState modelState, Map<String, String> parameterMap) {
         Map<String, Object> result = new HashMap<>();
+        /*
         if (modelState.hasRootElement()) {
             Report report = new Report(FOPBuilder.class);
             report.addFilename("report", factory.getAppName())
@@ -59,13 +60,13 @@ public class GenerateReportAction implements Action {
 
 
             // .setColumnWidth(10, 20, 10, 40)
-                    /*
-                    .addRow(1, "Peter", 22, "nice guy")
-                    .addRow(2, "Harry", 24, "not so nice guy")
-                    .addSeparator()
-                    .addRow(3, "Marie", 23.5, "nice girl")
-                    .setFooter("This is just an example! Harry is actually quite a nice guy!");
-                    */
+
+//                    .addRow(1, "Peter", 22, "nice guy")
+//                    .addRow(2, "Harry", 24, "not so nice guy")
+//                    .addSeparator()
+//                    .addRow(3, "Marie", 23.5, "nice girl")
+//                    .setFooter("This is just an example! Harry is actually quite a nice guy!");
+
             String fileAndPathName = report.generateFile();
             File pdfFile = new File(fileAndPathName);
             Optional<Executor<File>> pdfViewerExecutor = factory.getPdfViewerExecutor();
@@ -73,6 +74,7 @@ public class GenerateReportAction implements Action {
                 pdfViewerExecutor.get().run(pdfFile);
             }
         }
+        */
         return result;
     }
 }

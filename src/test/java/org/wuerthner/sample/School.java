@@ -25,10 +25,11 @@ public class School extends AbstractModelElement {
 			.required();
 
 	public School() {
-		super(TYPE, Arrays.asList(Course.TYPE), Arrays.asList(ID, NAME, ACTIVE, REP));
+		super(TYPE, Arrays.asList(Course.TYPE, ListObject.TYPE, TestObject.TYPE), Arrays.asList(ID, NAME, ACTIVE, REP));
 	}
 
 	public String getId() {
 		return this.getAttributeValue(ID);
 	}
+
 }

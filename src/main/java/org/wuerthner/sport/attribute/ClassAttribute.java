@@ -5,7 +5,7 @@ import org.wuerthner.sport.api.attributetype.Text;
 public class ClassAttribute extends AbstractAttribute<Class<?>,ClassAttribute,Text> implements Text {
 	
 	public ClassAttribute(String name) {
-		super(name, (Class<Class<?>>) (Class<?>) (Class<?>) Class.class, Text.class);
+		super(name, (Class<Class<?>>) (Class<?>) Class.class, Text.class);
 	}
 
 	@Override
@@ -14,7 +14,8 @@ public class ClassAttribute extends AbstractAttribute<Class<?>,ClassAttribute,Te
 			return null;
 		} else {
 			try {
-				return (Class<?>) Class.forName(stringValue);
+				if (stringValue.startsWith("class ")) stringValue = stringValue.substring(6);
+				return Class.forName(stringValue);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				throw new RuntimeException("Invalid attribute conversion '" + stringValue + "'");

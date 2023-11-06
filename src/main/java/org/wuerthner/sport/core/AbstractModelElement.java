@@ -570,21 +570,17 @@ public class AbstractModelElement implements ModelElement {
 	}
 
 	private Optional<ModelElement> lookupByFullId(ModelElement element, String fid) {
-		System.out.println("lu: " + fid);
 		String[] idArray = fid.split("\\.");
 		if (idArray.length==0) {
 			return Optional.empty();
 		} else {
-			System.out.println("  : " + idArray[0]);
 			if (idArray[0].equals(element.getId())) {
-				System.out.println("  !");
 				if (idArray.length==1) {
 					return Optional.of(element);
 				} else {
 					for (ModelElement child : element.getChildren()) {
 						Optional<ModelElement> result = lookupByFullId(child, fid.substring(fid.indexOf('.')+1));
 						if (result.isPresent()) {
-							System.out.println(" return: " + result.get().getFullId());
 							return result;
 						}
 					}

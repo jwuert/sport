@@ -60,8 +60,8 @@ publishing {
 
 dependencies {
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
-	implementation group: 'org.apache.xmlgraphics', name: 'fop', version: '2.2'
-	implementation group: 'org.wuerthner.ereport', name: 'ereport', version: '1.0.0-SNAPSHOT'
+	// implementation group: 'org.apache.xmlgraphics', name: 'fop', version: '2.2'
+	// implementation group: 'org.wuerthner.ereport', name: 'ereport', version: '1.0.0-SNAPSHOT'
 
 	testImplementation group: 'junit', name: 'junit', version: '4.+'
 	testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'

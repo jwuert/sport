@@ -6,6 +6,8 @@ import org.wuerthner.sport.SimpleDate;
 import java.util.Arrays;
 import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
+
 public class StaticListAttributeTest {
     @Test
     public void testList() {
@@ -13,8 +15,9 @@ public class StaticListAttributeTest {
                 .addValue("one", "eins")
                 .addValue("two", "zwei");
 
-        System.out.println(la.getValueMap());
-        System.out.println(la.getValue("one"));
-        System.out.println(la.getStringPresentation(Arrays.asList("hello", "world, yea!")));
+        assertEquals("eins", la.getValueMap().get("one"));
+        assertEquals("zwei", la.getValueMap().get("two"));
+        assertEquals(Arrays.asList("one"), la.getValue("one"));
+        assertEquals("[hello, world\\, yea!]", la.getStringPresentation(Arrays.asList("hello", "world, yea!")));
     }
 }

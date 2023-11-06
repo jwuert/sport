@@ -11,7 +11,7 @@ public class ListObject extends AbstractModelElement {
     public final static String TYPE = "ListObject";
 
     public final static IdAttribute id = new IdAttribute();
-    public final static DynamicListAttribute<Integer> ia = (DynamicListAttribute<Integer>) new DynamicListAttribute("ia", Integer.class)
+    public final static DynamicListAttribute<Integer> ia = new DynamicListAttribute<>("ia", Integer.class)
             .defaultValue(new ArrayList<>());
 
     public ListObject() {

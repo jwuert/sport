@@ -11,6 +11,7 @@ public class SampleFactory implements ModelElementFactory {
 			new School(), new Course(), new Participant(), new ListObject()
 	});
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ModelElement> T createElement(String typeName) {
 		T element;
@@ -19,19 +20,20 @@ public class SampleFactory implements ModelElementFactory {
 			case Course.TYPE: element = (T) new Course(); break;
 			case Participant.TYPE: element = (T) new Participant(); break;
 			case ListObject.TYPE: element = (T) new ListObject(); break;
+			case TestObject.TYPE: element = (T) new TestObject(); break;
 			default:
 				throw new RuntimeException("Invalid element type: " + typeName);
 		}
 		return element;
 	}
 	
-	// @Override
+	@Override
 	public List<ModelElement> createElementList() {
 		return elementList;
 	}
 	
-	// @Override
-	public String getDocumentType() {
+	@Override
+	public String getRootElementType() {
 		return School.TYPE;
 	}
 	

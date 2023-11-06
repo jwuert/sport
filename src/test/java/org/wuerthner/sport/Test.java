@@ -14,30 +14,15 @@ import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
 
 public class Test {
     private ModelElementFactory factory = new SampleFactory();
 
     @org.junit.Test
     public void testSample() {
-//        ModelElement school = factory.createElement(School.TYPE);
-//        school.performSetAttributeValueOperation(School.NAME, "High School");
-//        school.performSetAttributeValueOperation(School.ACTIVE, true);
-//        school.performSetAttributeValueOperation(School.REP, 37);
-//
-//        ModelElement physics = factory.createElement(Course.TYPE);
-//        physics.performSetAttributeValueOperation(Course.TITLE, "Physics");
-//        physics.performSetAttributeValueOperation(Course.SCORE, 500);
-//
-//        ModelElement part1 = factory.createElement(Participant.TYPE);
-//        part1.performSetAttributeValueOperation(Participant.NAME, "Jan");
-//
-//        ModelElement part2 = factory.createElement(Participant.TYPE);
-//        part2.performSetAttributeValueOperation(Participant.NAME, "Peter");
-//
-//        school.performTransientAddChildOperation(physics);
-//        physics.performTransientAddChildOperation(part1);
-//        physics.performTransientAddChildOperation(part2);
         ModelElement school = new SampleBuilder("MHS", "Midland High School", 37, true)
                 .addCourse("PH", "physics", 100)
                     .addParticipant("JW", "Jan")
@@ -52,11 +37,15 @@ public class Test {
         OutputStream os = new ByteArrayOutputStream();
         w.run(school, os);
 
-        String xml = os.toString();
-        System.out.println(xml);
+        String xml = os.toString().lines()
+                .collect(Collectors.joining())
+                .replaceAll(" +", " ")
+                .replaceFirst("timestamp=......................","");
+        String expected = "<?xml version=\"1.0\" encoding=\"US-ASCII\" standalone=\"no\"?><root version=\"1.0\"> <SchoolDef id=\"1000\" type=\"School\"> <Attribute key=\"name\" type=\"java.lang.String\">Midland High School</Attribute> <Attribute key=\"active\" type=\"java.lang.Boolean\">true</Attribute> <Attribute key=\"reputation\" type=\"java.lang.Integer\">37</Attribute> <Attribute key=\"id\" type=\"java.lang.String\">MHS</Attribute> <CourseRef id=\"1001\"/> <CourseRef id=\"1004\"/> </SchoolDef> <CourseDef id=\"1001\" type=\"Course\"> <Attribute key=\"score\" type=\"java.lang.Integer\">120</Attribute> <Attribute key=\"id\" type=\"java.lang.String\">MA</Attribute> <Attribute key=\"title\" type=\"java.lang.String\">math</Attribute> <ParticipantRef id=\"1002\"/> <ParticipantRef id=\"1003\"/> </CourseDef> <ParticipantDef id=\"1002\" type=\"Participant\"> <Attribute key=\"name\" type=\"java.lang.String\">Emil</Attribute> <Attribute key=\"id\" type=\"java.lang.String\">EG</Attribute> </ParticipantDef> <ParticipantDef id=\"1003\" type=\"Participant\"> <Attribute key=\"name\" type=\"java.lang.String\">Jan</Attribute> <Attribute key=\"id\" type=\"java.lang.String\">JW</Attribute> </ParticipantDef> <CourseDef id=\"1004\" type=\"Course\"> <Attribute key=\"score\" type=\"java.lang.Integer\">100</Attribute> <Attribute key=\"id\" type=\"java.lang.String\">PH</Attribute> <Attribute key=\"title\" type=\"java.lang.String\">physics</Attribute> <ParticipantRef id=\"1005\"/> <ParticipantRef id=\"1006\"/> </CourseDef> <ParticipantDef id=\"1005\" type=\"Participant\"> <Attribute key=\"name\" type=\"java.lang.String\">Hugo</Attribute> <Attribute key=\"id\" type=\"java.lang.String\">HX</Attribute> </ParticipantDef> <ParticipantDef id=\"1006\" type=\"Participant\"> <Attribute key=\"name\" type=\"java.lang.String\">Jan</Attribute> <Attribute key=\"id\" type=\"java.lang.String\">JW</Attribute> </ParticipantDef></root>";
+        assertEquals(expected, xml);
     }
 
-    @org.junit.Test
+    // @org.junit.Test
     public void testReport() {
         List<String> modelChanges = new ArrayList<>();
         String modelVersion = "?";
@@ -66,7 +55,6 @@ public class Test {
         List<ModelElement> list = factory.createElementList();
         File fopFile = fb.collect(list);
         File pdfFile = new File(fopFile.getAbsolutePath().replaceAll("\\.fop","-X.pdf"));
-        System.out.println("Specification file: " + pdfFile.getAbsolutePath());
         FOPProcessor fp = new FOPProcessor(fopFile, pdfFile);
         fp.run();
     }
@@ -91,14 +79,14 @@ public class Test {
         peter.performTransientSetAttributeValueOperation(Participant.NAME, "Peter");
         school.lookupByTypeAndId(Course.TYPE, "MA").get().performAddChildOperation(peter, history);
 
-        System.out.println(Model.makeString(school));
-        System.out.println("--- UNDO:");
-        history.undo();
-        System.out.println(Model.makeString(school));
-        System.out.println("--- REDO:");
-        history.redo();
+        // System.out.println(Model.makeString(school));
 
-        System.out.println(Model.makeString(school));
+        assertEquals(true, school.lookupByTypeAndId(Participant.TYPE, "PV").isPresent());
+        history.undo();
+        assertEquals(false, school.lookupByTypeAndId(Participant.TYPE, "PV").isPresent());
+        history.redo();
+        assertEquals(true, school.lookupByTypeAndId(Participant.TYPE, "PV").isPresent());
+
     }
 
     @org.junit.Test
@@ -126,10 +114,17 @@ public class Test {
 
         Delta delta = c.diff();
         List<Delta.Difference> differences = delta.getDifferences();
-        System.out.println("------------");
-        for (Delta.Difference d: differences) {
-            System.out.println("- " + d.toString());
-        }
+
+        Delta.Difference difference = differences.get(0);
+
+        assertEquals(1, differences.size());
+        assertEquals("MA", difference.id);
+        assertEquals("score", difference.attributeId);
+        assertEquals("Course", difference.elementType);
+        assertEquals("Score", difference.attributeLabel);
+        assertEquals("MHS.MA", difference.fqid);
+        assertEquals("120", difference.value1);
+        assertEquals("121", difference.value2);
     }
 
     @org.junit.Test

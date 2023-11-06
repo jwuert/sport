@@ -14,16 +14,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.FormattingResults;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.apps.PageSequenceResults;
+//import org.apache.fop.apps.FOPException;
+//import org.apache.fop.apps.FOUserAgent;
+//import org.apache.fop.apps.Fop;
+//import org.apache.fop.apps.FopFactory;
+//import org.apache.fop.apps.FormattingResults;
+//import org.apache.fop.apps.MimeConstants;
+//import org.apache.fop.apps.PageSequenceResults;
 
 public class FOPProcessor {
-    private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+    // private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
     private final File foFile;
     private final File pdfFile;
 
@@ -33,15 +33,17 @@ public class FOPProcessor {
     }
 
     public void run() {
-        try {
-            convertFO2PDF(foFile, pdfFile);
-        } catch (FOPException | IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            convertFO2PDF(foFile, pdfFile);
+//        } catch (FOPException | IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
-    public void convertFO2PDF(File fo, File pdf) throws IOException, FOPException {
-
+    public void convertFO2PDF(File fo, File pdf) throws IOException
+            //, FOPException
+    {
+        /*
         OutputStream out = null;
 
         try {
@@ -84,6 +86,7 @@ public class FOPProcessor {
             if (out!=null)
                 out.close();
         }
+         */
     }
 
 }
