@@ -37,6 +37,7 @@ tasks.named('check') {
 publishing {
 	repositories {
 		maven {
+	/*
 			name = 'nexus'
 			def urlLocalSnapshot = 'http://localhost:8082/repository/maven-snapshots/'
 			def urlLocalReleases = 'http://localhost:8082/repository/maven-releases/'
@@ -45,6 +46,10 @@ publishing {
 			url = version.endsWith('SNAPSHOT') ? urlDSSnapshots : urlDSReleases;
 
 			allowInsecureProtocol = true;
+   */
+			name = "GitHubPackages"
+			url = uri("https://maven.pkg.github.com/jwuert/sport")
+			
 			credentials {
 				username = project.repoUser
 				password = project.repoPassword
