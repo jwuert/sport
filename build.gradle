@@ -10,14 +10,6 @@ version '2.0.0-SNAPSHOT'
 
 repositories {
 	mavenLocal()
-	maven {
-		url 'http://diskstation2:8081/repository/maven-releases/'
-		allowInsecureProtocol = true
-	}
-	maven {
-		url 'http://diskstation2:8081/repository/maven-snapshots/'
-		allowInsecureProtocol = true
-	}
 	mavenCentral()
 	maven {
 		url "https://plugins.gradle.org/m2/"
@@ -37,16 +29,6 @@ tasks.named('check') {
 publishing {
 	repositories {
 		maven {
-	/*
-			name = 'nexus'
-			def urlLocalSnapshot = 'http://localhost:8082/repository/maven-snapshots/'
-			def urlLocalReleases = 'http://localhost:8082/repository/maven-releases/'
-			def urlDSReleases = 'http://diskstation2:8081/repository/maven-releases/'
-			def urlDSSnapshots = 'http://diskstation2:8081/repository/maven-snapshots/'
-			url = version.endsWith('SNAPSHOT') ? urlDSSnapshots : urlDSReleases;
-
-			allowInsecureProtocol = true;
-   */
 			name = "GitHubPackages"
 			url = uri("https://maven.pkg.github.com/jwuert/sport")
 			
@@ -66,8 +48,6 @@ publishing {
 
 dependencies {
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
-	// implementation group: 'org.apache.xmlgraphics', name: 'fop', version: '2.2'
-	// implementation group: 'org.wuerthner.ereport', name: 'ereport', version: '1.0.0-SNAPSHOT'
 
 	testImplementation group: 'junit', name: 'junit', version: '4.+'
 	testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
