@@ -8,6 +8,17 @@ plugins {
 group 'org.wuerthner.sport'
 version '2.0.0-SNAPSHOT'
 
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': 'Sport',
+            'Implementation-Version': version,
+            'Implementation-Vendor': 'Jan Wuerthner',
+            'License': 'GNU LGPL v3'
+        )
+    }
+}
+
 repositories {
 	mavenLocal()
 	mavenCentral()
