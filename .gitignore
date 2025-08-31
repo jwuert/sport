@@ -2,3 +2,5 @@ build/
 bin/
 .gradle/
 .idea/
+deploy.sh
+Comparator.sh
