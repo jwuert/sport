@@ -1,6 +1,7 @@
 package org.wuerthner.sport.action;
 
 import org.wuerthner.sport.api.*;
+import org.wuerthner.sport.core.EmptyUserProvider;
 import org.wuerthner.sport.core.Model;
 import org.wuerthner.sport.core.ModelState;
 import org.wuerthner.sport.util.fop.FOPBuilder;
@@ -30,7 +31,7 @@ public class GenerateModelReportAction implements Action {
             FOPBuilder fb = new FOPBuilder(factory.getAppName(), "Model: " + modelVersion, actionProvider, modelChanges);
 
             // List<ModelElement> list = Stream.of(typesReduced).map(type -> (ModelElement) factory.createElement(type)).collect(Collectors.toList());
-            List<ModelElement> list = factory.createElementList();
+            List<ModelElement> list = factory.createElementList(new EmptyUserProvider());
             File fopFile = fb.collect(list);
 
             File pdfFile = new File(fopFile.getAbsolutePath().replaceAll("\\.fop","-X.pdf"));

@@ -52,7 +52,7 @@ public class Test {
         ActionProvider actionProvider = factory.getActionProvider();
         FOPBuilder fb = new FOPBuilder(factory.getAppName(), "Model: " + modelVersion, actionProvider, modelChanges);
         // List<ModelElement> list = Stream.of(typesReduced).map(type -> (ModelElement) factory.createElement(type)).collect(Collectors.toList());
-        List<ModelElement> list = factory.createElementList();
+        List<ModelElement> list = factory.createElementList(new EmptyUserProvider());
         File fopFile = fb.collect(list);
         File pdfFile = new File(fopFile.getAbsolutePath().replaceAll("\\.fop","-X.pdf"));
         FOPProcessor fp = new FOPProcessor(fopFile, pdfFile);

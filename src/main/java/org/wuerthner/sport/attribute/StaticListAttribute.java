@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class StaticListAttribute<T> extends AbstractAttribute<List<T>, StaticListAttribute<T>, StaticMultiSelect> implements StaticMultiSelect {
     public final static String SEP = "\\|";
-    private Map<String, T> selectableValueMap = new LinkedHashMap<>();
+    private final Map<String, T> selectableValueMap = new LinkedHashMap<>();
     public final Class<T> elementType;
 
     public StaticListAttribute(String name, Class<T> clasz) {

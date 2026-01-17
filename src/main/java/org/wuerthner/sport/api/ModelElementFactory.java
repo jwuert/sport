@@ -1,6 +1,7 @@
 package org.wuerthner.sport.api;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 public interface ModelElementFactory {
 	public  <T extends ModelElement> T createElement(String typeName);
 
-	public List<ModelElement> createElementList();
+	public List<ModelElement> createElementList(UserProvider userProvider);
 	
 	default <T> ModelElement copyTree(ModelElement original) {
 		ModelElement copy = this.createElement(original.getType());
@@ -48,4 +49,6 @@ public interface ModelElementFactory {
 	default String getFileExtension() { return "sxml"; }
 
 	default String getAppName() { return ""; }
+
+    public Map<String,String> getUserMap();
 }

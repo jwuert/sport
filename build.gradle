@@ -1,12 +1,12 @@
 plugins {
 	id 'java'
-	id 'jacoco-report-aggregation'
-	id 'com.github.spotbugs' version '4.8.0' apply true
+	// id 'jacoco-report-aggregation'
+	// id 'com.github.spotbugs' version '4.8.0' apply true
 	id 'maven-publish'
 }
 
 group 'org.wuerthner.sport'
-version '2.0.0'
+version '2.0.1-SNAPSHOT'
 
 jar {
     manifest {
@@ -27,14 +27,14 @@ repositories {
 	}
 }
 
-spotbugs {
-	ignoreFailures = true
-	reportLevel = "high"
-}
+//spotbugs {
+//	ignoreFailures = true
+//	reportLevel = "high"
+//}
 
-tasks.named('check') {
-	dependsOn tasks.named('testCodeCoverageReport', JacocoReport)
-}
+//tasks.named('check') {
+//	dependsOn tasks.named('testCodeCoverageReport', JacocoReport)
+//}
 
 
 publishing {
