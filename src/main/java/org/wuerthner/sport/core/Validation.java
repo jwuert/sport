@@ -5,22 +5,20 @@ import org.wuerthner.sport.api.Check;
 import org.wuerthner.sport.api.ModelElement;
 import org.wuerthner.sport.attribute.IdAttribute;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Validation {
     public Validation() {}
 
     public ValidationResult validate(ModelElement element) {
         ValidationResult validationResult = validateSingle(element);
-        List<String> idList = new ArrayList<>();
+        Map<String,List<String>> idMap = new HashMap<>();
         for (ModelElement child : element.getChildren()) {
             validationResult.addEntries(validate(child));
-            if (idList.contains(child.getId())) {
+            if (idMap.get(child.getType()) != null && idMap.get(child.getType()).contains(child.getId())) {
                 validationResult.addError(child, child.getAttribute(IdAttribute.ID_NAME),"Ambiguous ID");
             }
-            idList.add(child.getId());
+            idMap.computeIfAbsent(child.getType(), k -> new ArrayList<>()).add(child.getId());
         }
         return validationResult;
     }
