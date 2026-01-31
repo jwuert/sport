@@ -16,6 +16,7 @@ public class Validation {
         for (ModelElement child : element.getChildren()) {
             validationResult.addEntries(validate(child));
             if (idMap.get(child.getType()) != null && idMap.get(child.getType()).contains(child.getId())) {
+                // validationResult.addError(child, child.getAttribute(IdAttribute.ID_NAME),"Ambiguous ID");
                 validationResult.addError(child, child.getAttribute(IdAttribute.ID_NAME),"Ambiguous ID");
             }
             idMap.computeIfAbsent(child.getType(), k -> new ArrayList<>()).add(child.getId());

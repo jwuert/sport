@@ -121,8 +121,13 @@ public class AbstractModelElement implements ModelElement {
 
 	@Override
 	public Attribute<?> getAttribute(String name) {
-		return attributes.stream().filter(a -> a.getName().equals(name)).findAny().get();
-	}
+        Optional<Attribute<?>> attribute = attributes.stream().filter(a -> a.getName().equals(name)).findAny();
+        if (attribute.isPresent()) {
+            return attribute.get();
+        } else {
+            return attributes.get(0);
+        }
+    }
 
 	@Override
 	public boolean isDeleted() {
