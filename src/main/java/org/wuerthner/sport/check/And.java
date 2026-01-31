@@ -14,7 +14,7 @@ public class And extends AbstractCheck<And> {
         this.innerCheck2 = innerCheck2;
         addProperty("innerCheck1", innerCheck1.getProperties());
         addProperty("innerCheck2", innerCheck2.getProperties());
-        message("(" + innerCheck1.getMessage() + " AND " + innerCheck2.getMessage());
+        message("(" + innerCheck1.getMessage() + " AND " + innerCheck2.getMessage() + ")");
     }
 
     @Override
